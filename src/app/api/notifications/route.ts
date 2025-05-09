@@ -64,7 +64,7 @@ function getLogoAttachment() {
 
   if (isVercel) {
     // On Vercel, use the URL approach
-    const domain = process.env.VERCEL_URL || "your-app-name.vercel.app";
+    const domain = process.env.VERCEL_URL || "cakeshop-rust-delta.vercel.app";
     return {
       filename: "logo.webp",
       path: `https://${domain}/logo-JPG.webp`,
