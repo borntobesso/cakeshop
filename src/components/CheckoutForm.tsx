@@ -26,7 +26,7 @@ const timeSlots = [
 ]
 
 export default function CheckoutForm({ isOpen, onClose, onConfirm }: CheckoutFormProps) {
-  const { items } = useCart()
+  useCart()
   const [formData, setFormData] = useState<OrderDetails>({
     customerName: '',
     email: '',

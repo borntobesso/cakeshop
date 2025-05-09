@@ -379,10 +379,10 @@ Date de retrait : ${orderDetails.pickupDate} à ${orderDetails.pickupTime}
     };
 
     // Send both emails
-    // await Promise.all([
-    //   transporter.sendMail(customerEmailOptions),
-    //   transporter.sendMail(ownerEmailOptions),
-    // ]);
+    await Promise.all([
+      transporter.sendMail(customerEmailOptions),
+      transporter.sendMail(ownerEmailOptions),
+    ]);
 
     // Print order notification using Hiboutik API
     if (HIBOUTIK_API_LOGIN && HIBOUTIK_API_KEY && HIBOUTIK_PRINTER_IP) {
@@ -431,7 +431,7 @@ TOTAL: ${orderDetails.totalPrice}€
             },
             body: JSON.stringify({
               store_id: HIBOUTIK_STORE_ID,
-              // ip_address: HIBOUTIK_PRINTER_IP,
+              ip_address: HIBOUTIK_PRINTER_IP,
               port: HIBOUTIK_PRINTER_PORT || "", // Leave blank for default if not specified
               // printer: "receipt", // Using receipt printer as default
               data: printContent,
