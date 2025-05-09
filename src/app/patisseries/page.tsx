@@ -1,8 +1,9 @@
 import Image from 'next/image';
-import { products } from '@/data/products.json';
-import { Product } from '@/types/product';
+import productsData from '@/data/products.json'
+import { Product } from '@/types/product'
 
 export default function PatisseriesPage() {
+  const products = productsData.products as Product[]
   const pastries = products.filter(
     (product) => product.category === 'patisserie'
   ) as Product[];

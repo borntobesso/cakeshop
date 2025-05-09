@@ -2,11 +2,14 @@
 
 import { useState } from 'react'
 import Image from 'next/image'
-import { products } from '@/data/products.json'
+import productsData from '@/data/products.json'
+import { Product } from '@/types/product'
 import SizeSelectionDialog from '@/components/SizeSelectionDialog'
 import { useCart } from '@/context/CartContext'
 
 export default function WholeGateauPage() {
+  const products = productsData.products as Product[]
+  
   const [selectedProduct, setSelectedProduct] = useState<typeof products[0] | null>(null)
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const { addToCart } = useCart()
