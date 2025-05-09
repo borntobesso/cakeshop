@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import nodemailer from "nodemailer";
 import fetch from "node-fetch";
+import path from "path";
+
 
 // Email configuration
 const EMAIL_HOST = process.env.NEXT_PUBLIC_EMAIL_HOST;
@@ -54,6 +56,29 @@ interface OrderDetails {
     size?: string;
   }>;
   totalPrice: number;
+}
+
+// Function to get logo attachment based on environment
+function getLogoAttachment() {
+  // Check if we're in a Vercel production environment
+  const isVercel = process.env.VERCEL === '1';
+  
+  if (isVercel) {
+    // On Vercel, use the URL approach
+    const domain = process.env.VERCEL_URL || 'your-app-name.vercel.app';
+    return {
+      filename: "logo.webp",
+      path: `https://${domain}/logo-JPG.webp`,
+      cid: "unique-logo-id",
+    };
+  } else {
+    // In local development, use the file path approach
+    return {
+      filename: "logo.webp",
+      path: path.join(process.cwd(), "public", "logo-JPG.webp"),
+      cid: "unique-logo-id",
+    };
+  }
 }
 
 function createCustomerEmailHTML(orderDetails: OrderDetails) {
@@ -312,13 +337,7 @@ export async function POST(request: Request) {
       to: orderDetails.email,
       subject: `Confirmation de votre commande - ${SHOP_NAME}`,
       html: createCustomerEmailHTML(orderDetails),
-      attachments: [
-        {
-          filename: "logo.webp",
-          path: process.cwd() + "/public/logo-JPG.webp",
-          cid: "unique-logo-id", // Use this ID in the image src
-        },
-      ],
+      attachments: [getLogoAttachment()],
       text: `
 Bonjour ${orderDetails.customerName},
 
