@@ -317,7 +317,7 @@ export async function POST(request: Request) {
           filename: "logo.webp",
           path:
             process.env.VERCEL === "1"
-              ? process.cwd() + "/logo-JPG.webp"
+              ? "logo-JPG.webp"
               : process.cwd() + "/public/logo-JPG.webp",
           cid: "unique-logo-id", // Use this ID in the image src
         },
