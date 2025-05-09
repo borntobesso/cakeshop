@@ -1,0 +1,206 @@
+{
+	"products": [
+		{
+			"id": 1,
+			"name": "KURO GOMA",
+			"description": "Entremet au Sésame noir", 
+			"price": 7,
+			"available": true,
+			"image": "/mangopassion.png",
+			"stock": 100,
+			"category": "CAKE"
+		},
+		{
+			"id": 2,
+			"name": "PARIS TOKYO",
+			"description": "Entremet Matcha Caramel Spéculos",
+			"price": 7,
+			"available": true,
+			"image": "/mangopassion.png",
+			"stock": 150,
+			"category": "CAKE"
+		},
+		{
+			"id": 3,
+			"name": "MANGO PASSION",
+			"description": "Entremet Vanille mangue passion",
+			"price": 7,
+			"available": true,
+			"image": "/mangopassion.png",
+			"stock": 100,
+			"category": "CAKE"
+		},
+		{
+			"id": 4,
+			"name": "ROYAL CHOCOLAT",
+			"description": "Entremet Chocolat noir 65%",
+			"price": 7,
+			"available": true,
+			"image": "/mangopassion.png",
+			"stock": 100,
+			"category": "CAKE"
+		},
+		{
+			"id": 5,
+			"name": "SEOUL PARIS",
+			"description": "Entremet Matcha & Sésame noir",
+			"price": 7,
+			"available": true,
+			"image": "/mangopassion.png",
+			"stock": 100,
+			"category": "CAKE"
+		},
+		{
+			"id": 6,
+			"name": "ENTREMET DURIAN",
+			"description": "Ganache montée Vanille, Durian, Biscuit joconde, Croustillant Chocolat",
+			"price": 7,
+			"available": true,
+			"image": "/mangopassion.png",
+			"stock": 100,
+			"category": "CAKE"
+		},
+		{
+			"id": 7,
+			"name": "PANACOTTA PANDAN MANGUE",
+			"description": "(gluten free) - Pandan, Coco, Mangue & Purée de mangue",
+			"price": 7,
+			"available": true,
+			"image": "/mangopassion.png",
+			"stock": 100,
+			"category": "CAKE"
+		},
+		{
+			"id": 8,
+			"name": "Chaï Latte",
+			"description": "Sticky Chaï by La Main Noire", 
+			"price": 5.50,
+			"available": true,
+			"image": "strawberry.jpg",
+			"stock": 100,
+				"category": "CAFE"
+		},
+		{
+			"id": 9,
+			"name": "Matcha Latte",
+			"description": "Matcha Umami - Japon",
+			"price": 5.50,
+			"available": true,
+			"image": "strawberry.jpg",
+			"stock": 100,
+				"category": "CAFE"
+		},
+		{
+			"id": 10,
+			"name": "Sesame Latte",
+			"description": "Pâte de sésame Bio", 
+			"price": 5.50,
+			"available": true,
+			"image": "strawberry.jpg",
+			"stock": 100,
+				"category": "CAFE"
+		},
+		{
+			"id": 11,
+			"name": "Thaï Tea Latte",
+			"description": "Original ChaTraMue Thailand Tea", 
+			"price": 5.50,
+			"available": true,
+			"image": "strawberry.jpg",
+			"stock": 100,
+				"category": "CAFE"
+		},
+		{
+			"id": 12,
+			"name": "Pandan Latte",
+			"description": "Le pandan est une plante verte d'asie au parfum subtil d'amandes et de vanille - Préparation maison",
+			"price": 5.50,
+			"available": true,
+			"image": "strawberry.jpg",
+			"stock": 100,
+				"category": "CAFE"
+		},
+		{
+			"id": 13,
+			"name": "Cafe Latte classic",
+			"description": "Nos Lattes sont préparés avec du lait stérilisé français issus de vaches nourries sans OGM.",
+			"price": 5.50,
+			"available": true,
+			"image": "strawberry.jpg",
+			"stock": 100,
+				"category": "CAFE"
+		},
+		{
+			"id": 14,
+			"name": "SAVOURY STACK",
+			"description": "Pancakes, oeufs au plat BIO, bacon (ou bacon végétal), pur sirop d’érable, salade verte",
+			"price": 13.50,
+			"available": true,
+			"image": "strawberry.jpg",
+			"stock": 100,
+				"category": "BRUNCH"
+		},
+		{
+			"id": 15,
+			"name": "SALMON AVOCADO",
+			"description": "Pancakes, oeuf poché BIO, saumon fumé, guacamole au kimchi maison, salade verte",
+			"price": 14.90,
+			"available": true,
+			"image": "strawberry.jpg",
+			"stock": 100,
+				"category": "BRUNCH"
+		},
+		{
+			"id": 16,
+			"name": "YUZU BENEDICTOAST",
+			"description": "Shokupan Toast, oeuf poché BIO, sauce hollandaise yuzu maison, guacamole kimchi, bacon (ou bacon vg), salade verte",
+			"price": 15.90,
+			"available": true,
+			"image": "strawberry.jpg",
+			"stock": 100,
+				"category": "BRUNCH"
+		},
+		{
+			"id": "gateau-1",
+			"name": "Fraisier Classique",
+			"description": "Gâteau traditionnel aux fraises fraîches, crème mousseline à la vanille et génoise moelleuse",
+			"price": 35.00,
+			"category": "gateau-entier",
+			"image": "/images/fraisier.jpg",
+			"available": true,
+			"preparationTime": "24 heures",
+			"minimumNotice": "48 heures",
+			"serves": 8
+		  },
+		  {
+			"id": "gateau-2",
+			"name": "Forêt Noire",
+			"description": "Gâteau au chocolat avec cerises, crème chantilly et copeaux de chocolat",
+			"price": 40.00,
+			"category": "gateau-entier",
+			"image": "/images/foret-noire.jpg",
+			"available": true,
+			"preparationTime": "24 heures",
+			"minimumNotice": "48 heures",
+			"serves": 10
+		  },
+		  {
+			"id": "patisserie-1",
+			"name": "Éclair au Chocolat",
+			"description": "Pâte à choux croustillante, garnie de crème pâtissière au chocolat",
+			"price": 4.50,
+			"category": "patisserie",
+			"image": "/images/eclair-chocolat.jpg",
+			"available": true
+		  },
+		  {
+			"id": "patisserie-2",
+			"name": "Paris-Brest",
+			"description": "Couronne de pâte à choux garnie de crème pralinée",
+			"price": 5.50,
+			"category": "patisserie",
+			"image": "/images/paris-brest.jpg",
+			"available": true
+		  }
+		]
+}

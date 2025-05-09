@@ -1,15 +1,14 @@
-@import "tailwindcss";
+@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600&family=Raleway:wght@300;400;500&display=swap");
 
-:root {
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* :root {
   --background: #ffffff;
   --foreground: #171717;
-}
-
-@theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -22,5 +21,12 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'Raleway', Arial, sans-serif;
+} */
+.font-serif {
+  font-family: 'Playfair Display', serif;
+}
+
+body {
+  font-family: 'Raleway', sans-serif;
 }
