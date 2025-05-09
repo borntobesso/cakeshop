@@ -3,7 +3,6 @@ import nodemailer from "nodemailer";
 import fetch from "node-fetch";
 import path from "path";
 
-
 // Email configuration
 const EMAIL_HOST = process.env.NEXT_PUBLIC_EMAIL_HOST;
 const EMAIL_PORT = parseInt(process.env.NEXT_PUBLIC_EMAIL_PORT || "587", 10);
@@ -61,11 +60,11 @@ interface OrderDetails {
 // Function to get logo attachment based on environment
 function getLogoAttachment() {
   // Check if we're in a Vercel production environment
-  const isVercel = process.env.VERCEL === '1';
-  
+  const isVercel = process.env.VERCEL === "1";
+
   if (isVercel) {
     // On Vercel, use the URL approach
-    const domain = process.env.VERCEL_URL || 'your-app-name.vercel.app';
+    const domain = process.env.VERCEL_URL || "your-app-name.vercel.app";
     return {
       filename: "logo.webp",
       path: `https://${domain}/logo-JPG.webp`,
@@ -367,13 +366,6 @@ Date de retrait : ${orderDetails.pickupDate} à ${orderDetails.pickupTime}
       to: SHOP_EMAIL,
       subject: "Nouvelle commande reçue",
       html: createOwnerEmailHTML(orderDetails),
-      attachments: [
-        {
-          filename: "logo.webp",
-          path: process.cwd() + "/public/logo-JPG.webp",
-          cid: "unique-logo-id", // Use this ID in the image src
-        },
-      ],
       text: `
 Nouvelle commande reçue !
 
