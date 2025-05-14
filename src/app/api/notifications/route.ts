@@ -15,7 +15,7 @@ const SHOP_NAME = process.env.NEXT_PUBLIC_SHOP_NAME || "Fu Pâtisserie";
 const HIBOUTIK_API_LOGIN = process.env.NEXT_PUBLIC_HIBOUTIK_API_LOGIN;
 const HIBOUTIK_API_KEY = process.env.NEXT_PUBLIC_HIBOUTIK_API_KEY;
 const HIBOUTIK_STORE_ID = 1; // Store ID as specified
-const HIBOUTIK_PRINTER_IP = process.env.NEXT_PUBLIC_HIBOUTIK_PRINTER_IP;
+const STORE_IP_ADDR = process.env.NEXT_PUBLIC_STORE_IP_ADDR;
 const HIBOUTIK_PRINTER_PORT = process.env.NEXT_PUBLIC_HIBOUTIK_PRINTER_PORT;
 
 // Log environment variables (without sensitive data)
@@ -26,7 +26,7 @@ console.log("Environment check:", {
   hasHiboutikConfig: !!(
     HIBOUTIK_API_LOGIN &&
     HIBOUTIK_API_KEY &&
-    HIBOUTIK_PRINTER_IP
+    STORE_IP_ADDR
   ),
 });
 
@@ -381,7 +381,7 @@ Date de retrait : ${orderDetails.pickupDate} à ${orderDetails.pickupTime}
     ]);
 
     // Print order notification using Hiboutik API
-    if (HIBOUTIK_API_LOGIN && HIBOUTIK_API_KEY && HIBOUTIK_PRINTER_IP) {
+    if (HIBOUTIK_API_LOGIN && HIBOUTIK_API_KEY && STORE_IP_ADDR) {
       try {
         // Prepare the print content
         const printContent = `
@@ -427,9 +427,8 @@ TOTAL: ${orderDetails.totalPrice}€
             },
             body: JSON.stringify({
               store_id: HIBOUTIK_STORE_ID,
-              ip_address: HIBOUTIK_PRINTER_IP,
-              port: HIBOUTIK_PRINTER_PORT || "", // Leave blank for default if not specified
-              // printer: "receipt", // Using receipt printer as default
+              ip_address: STORE_IP_ADDR,
+              port: HIBOUTIK_PRINTER_PORT || "",
               data: printContent,
             }),
           }
