@@ -2,13 +2,13 @@
 
 import { useState } from 'react'
 import { useCart } from '@/context/CartContext'
-import { Dialog, Transition } from '@headlessui/react'
+import { Dialog, DialogPanel, DialogTitle, Transition, TransitionChild } from '@headlessui/react'
 import { Fragment } from 'react'
 
 interface CheckoutFormProps {
   isOpen: boolean
   onClose: () => void
-  onConfirm: (orderDetails: OrderDetails) => void
+  onConfirm: (orderDetails: OrderDetails) => Promise<boolean> // onConfirm renvoie une promesse
 }
 
 interface OrderDetails {
@@ -36,6 +36,7 @@ export default function CheckoutForm({ isOpen, onClose, onConfirm }: CheckoutFor
   })
 
   const [errors, setErrors] = useState<Partial<OrderDetails>>({})
+  const [isSubmitting, setIsSubmitting] = useState(false) // Nouvel état local
 
   const validateForm = () => {
     const newErrors: Partial<OrderDetails> = {}
@@ -48,10 +49,18 @@ export default function CheckoutForm({ isOpen, onClose, onConfirm }: CheckoutFor
     return Object.keys(newErrors).length === 0
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => { // La fonction devient async
     e.preventDefault()
     if (validateForm()) {
-      onConfirm(formData)
+      setIsSubmitting(true) // Activer le spinner local
+      const success = await onConfirm(formData) // Attendre la résolution de la promesse
+      setIsSubmitting(false) // Désactiver le spinner local
+      if (success) {
+        onClose() // Fermer la modal en cas de succès (le message sera affiché dans le parent)
+      } else {
+        // Vous pouvez choisir d'afficher un message d'erreur DANS la modal ici si vous préférez
+        // setErrors({ ...errors, general: 'Erreur lors de la commande.' });
+      }
     }
   }
 
@@ -66,11 +75,10 @@ export default function CheckoutForm({ isOpen, onClose, onConfirm }: CheckoutFor
     date.setDate(date.getDate() + 14)
     return date.toISOString().split('T')[0]
   }
-
   return (
     <Transition appear show={isOpen} as={Fragment}>
       <Dialog as="div" className="relative z-50" onClose={onClose}>
-        <Transition.Child
+        <TransitionChild
           as={Fragment}
           enter="ease-out duration-300"
           enterFrom="opacity-0"
@@ -80,11 +88,11 @@ export default function CheckoutForm({ isOpen, onClose, onConfirm }: CheckoutFor
           leaveTo="opacity-0"
         >
           <div className="fixed inset-0 bg-black bg-opacity-25" />
-        </Transition.Child>
+        </TransitionChild>
 
         <div className="fixed inset-0 overflow-y-auto">
           <div className="flex min-h-full items-center justify-center p-4 text-center">
-            <Transition.Child
+            <TransitionChild
               as={Fragment}
               enter="ease-out duration-300"
               enterFrom="opacity-0 scale-95"
@@ -93,13 +101,13 @@ export default function CheckoutForm({ isOpen, onClose, onConfirm }: CheckoutFor
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
-                <Dialog.Title
+              <DialogPanel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
+                <DialogTitle
                   as="h3"
                   className="text-lg font-medium leading-6 text-gray-900"
                 >
                   Détails de la commande
-                </Dialog.Title>
+                </DialogTitle>
 
                 <form onSubmit={handleSubmit} className="mt-4 space-y-4">
                   <div>
@@ -197,12 +205,19 @@ export default function CheckoutForm({ isOpen, onClose, onConfirm }: CheckoutFor
                       type="submit"
                       className="inline-flex justify-center rounded-md border border-transparent bg-patisserie-coral px-4 py-2 text-sm font-medium text-white hover:bg-patisserie-yellow"
                     >
-                      Confirmer la commande
+                      {isSubmitting ? (
+                        <div className="flex items-center justify-center">
+                          <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                          <span className="ml-2">Traitement...</span>
+                        </div>
+                      ) : (
+                        'Confirmer la commande'
+                      )}
                     </button>
                   </div>
                 </form>
-              </Dialog.Panel>
-            </Transition.Child>
+              </DialogPanel>
+            </TransitionChild>
           </div>
         </div>
       </Dialog>

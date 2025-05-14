@@ -385,30 +385,30 @@ Date de retrait : ${orderDetails.pickupDate} à ${orderDetails.pickupTime}
       try {
         // Prepare the print content
         const printContent = `
-=========================
-NOUVELLE COMMANDE
-=========================
-Client: ${orderDetails.customerName}
-Tel: ${orderDetails.phone}
-Email: ${orderDetails.email}
+    =========================
+    NOUVELLE COMMANDE
+    =========================
+    Client: ${orderDetails.customerName}
+    Tel: ${orderDetails.phone}
+    Email: ${orderDetails.email}
 
-DATE DE RETRAIT:
-${orderDetails.pickupDate}
-${orderDetails.pickupTime}
+    DATE DE RETRAIT:
+    ${orderDetails.pickupDate}
+    ${orderDetails.pickupTime}
 
-PRODUITS:
-${orderDetails.items
-  .map(
-    (item) =>
-      `${item.name}${item.size ? ` (${item.size})` : ""} x${item.quantity} : ${
-        item.price * item.quantity
-      }€`
-  )
-  .join("\n")}
+    PRODUITS:
+    ${orderDetails.items
+      .map(
+        (item) =>
+          `${item.name}${item.size ? ` (${item.size})` : ""} x${
+            item.quantity
+          } : ${item.price * item.quantity}€`
+      )
+      .join("\n")}
 
-TOTAL: ${orderDetails.totalPrice}€
-=========================
-        `.trim();
+    TOTAL: ${orderDetails.totalPrice}€
+    =========================
+            `.trim();
 
         // Create authentication string for Basic Auth
         const auth = Buffer.from(

@@ -17,10 +17,16 @@ interface OrderDetails {
 export default function CartPage() {
   const { items, removeFromCart, updateQuantity, clearCart } = useCart()
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false)
+  const [notification, setNotification] = useState<{ type: 'success' | 'error' | null; message: string | null }>({
+    type: null,
+    message: null,
+  })
 
   const totalPrice = items.reduce((sum, item) => sum + (item.price * item.quantity), 0)
 
   const handleCheckout = async (orderDetails: OrderDetails) => {
+    setNotification({ type: null, message: null }) // Clear previous notifications
+    
     const orderData = {
       ...orderDetails,
       items: items.map(item => ({
@@ -36,12 +42,19 @@ export default function CartPage() {
     if (success) {
       clearCart()
       setIsCheckoutOpen(false)
-      // TODO: Show success message
+      setNotification({ type: 'success', message: 'Votre commande a été enregistrée avec succès !' })
     } else {
-      // TODO: Show error message
+      setIsCheckoutOpen(false)
+      setNotification({ type: 'error', message: 'Une erreur est survenue lors de l\'enregistrement de votre commande. Veuillez réessayer.' })
     }
+    return success;
   }
 
+  const handleCloseCheckout = () => {
+    setIsCheckoutOpen(false)
+    setNotification({ type: null, message: null }) // Clear notification when closing checkout
+  }
+  
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-serif text-center mb-8">Votre Panier</h1>
@@ -118,9 +131,19 @@ export default function CartPage() {
 
       <CheckoutForm
         isOpen={isCheckoutOpen}
-        onClose={() => setIsCheckoutOpen(false)}
+        onClose={handleCloseCheckout}
         onConfirm={handleCheckout}
       />
+      
+      {notification.message && (
+        <div
+          className={`mt-8 p-4 rounded-md text-white ${
+            notification.type === 'success' ? 'bg-green-500' : 'bg-red-500'
+          }`}
+        >
+          {notification.message}
+        </div>
+      )}
     </div>
   )
 } 

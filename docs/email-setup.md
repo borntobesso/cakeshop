@@ -2,7 +2,9 @@
 
 ## Gmail SMTP setup
 
-1. Enable 2-way 
+1. Enable 2-Step Verification on your Google account
+2. Create an "App Password"
+3. Add this app password in .env (NEXT_PUBLIC_EMAIL_USER)
 
 ## SendGrid Account Setup
 
