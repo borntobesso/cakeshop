@@ -25,7 +25,7 @@ export default function Home() {
             Christine Fu by FuLiFamily since 2018
           </p>
           <Link 
-            href="/menu" 
+            href="/patisseries" 
             className="bg-patisserie-coral hover:bg-patisserie-yellow transition-colors duration-300 text-gray-800 px-8 py-3 rounded-full font-medium"
           >
             Voir Notre Menu
