@@ -34,8 +34,12 @@ export default function WholeGateauPage() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-serif text-center mb-8">Nos Gâteaux Entiers</h1>
-      
+      <h1 className="text-4xl font-serif text-center mb-8">Nos Gâteaux Entiers</h1>
+      <p className="text-center text-gray-600 mb-12 max-w-2xl mx-auto">
+        Toutes nos pâtisseries peuvent être commandées en gâteaux entiers pour vos 
+        occasions spéciales. Commande à passer au moins 48h à l&apos;avance pour garantir 
+        la fraîcheur et la qualité de nos créations artisanales.
+      </p>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {cakeProducts.map((product) => (
           <div 
@@ -57,7 +61,7 @@ export default function WholeGateauPage() {
                 onClick={() => handleOrderClick(product)}
                 className="w-full bg-patisserie-coral hover:bg-patisserie-yellow transition-colors duration-300 text-white px-4 py-2 rounded-full font-medium"
               >
-                Commander
+                Ajouter au panier
               </button>
             </div>
           </div>

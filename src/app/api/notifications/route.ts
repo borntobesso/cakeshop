@@ -259,6 +259,30 @@ function createOwnerEmailHTML(orderDetails: OrderDetails) {
   `;
 }
 
+function generateOrderNumber(): string {
+  const today = new Date();
+  const month = (today.getMonth() + 1).toString().padStart(2, "0");
+  const day = today.getDate().toString().padStart(2, "0");
+
+  const dateString = `${day}-${month}`;
+
+  const todayKey = `${today.getFullYear()}-${
+    today.getMonth() + 1
+  }-${today.getDate()}`;
+
+  let orderCount = parseInt(
+    localStorage.getItem(`orderCount_${todayKey}`) || "0"
+  );
+
+  orderCount += 1;
+
+  localStorage.setItem(`orderCount_${todayKey}`, orderCount.toString());
+
+  const orderNumber = orderCount.toString().padStart(2, "0");
+
+  return `${dateString}-${orderNumber}`;
+}
+
 export async function POST(request: Request) {
   console.log("API route called with method: POST");
 
@@ -266,7 +290,6 @@ export async function POST(request: Request) {
     const orderDetails: OrderDetails = await request.json();
     console.log("Request body:", orderDetails);
 
-    // Validate required fields
     if (
       !orderDetails.customerName ||
       !orderDetails.email ||
@@ -283,7 +306,6 @@ export async function POST(request: Request) {
       );
     }
 
-    // Check environment variables
     if (!EMAIL_HOST || !EMAIL_USER || !EMAIL_PASS) {
       console.error("Email configuration is missing");
       return NextResponse.json(
@@ -319,7 +341,7 @@ export async function POST(request: Request) {
             process.env.VERCEL === "1"
               ? "https://cakeshop-rust-delta.vercel.app/logo-JPG.webp"
               : process.cwd() + "/public/logo-JPG.webp",
-          cid: "unique-logo-id", // Use this ID in the image src
+          cid: "unique-logo-id",
         },
       ],
       text: `
@@ -384,15 +406,24 @@ Date de retrait : ${orderDetails.pickupDate} à ${orderDetails.pickupTime}
     if (HIBOUTIK_API_LOGIN && HIBOUTIK_API_KEY && STORE_IP_ADDR) {
       try {
         // Prepare the print content
+        const nCommande = generateOrderNumber();
         const printContent = `
-    =========================
-    NOUVELLE COMMANDE
-    =========================
-    Client: ${orderDetails.customerName}
-    Tel: ${orderDetails.phone}
-    Email: ${orderDetails.email}
+<hibou_align_center>
+<hibou_use_font_b>
+<hibou_font_size>2|2
+=========================
+N° de commande - ${nCommande}
+=========================
 
-    DATE DE RETRAIT:
+<hibou_align_left>
+
+Client: ${orderDetails.customerName}
+
+Tel: ${orderDetails.phone}
+
+Email: ${orderDetails.email}
+
+DATE DE RETRAIT:
     ${orderDetails.pickupDate}
     ${orderDetails.pickupTime}
 
@@ -402,12 +433,12 @@ Date de retrait : ${orderDetails.pickupDate} à ${orderDetails.pickupTime}
         (item) =>
           `${item.name}${item.size ? ` (${item.size})` : ""} x${
             item.quantity
-          } : ${item.price * item.quantity}€`
+          } : ${item.price * item.quantity} euros`
       )
-      .join("\n")}
+      .join("\n\n")}
 
-    TOTAL: ${orderDetails.totalPrice}€
-    =========================
+TOTAL: ${orderDetails.totalPrice.toFixed(2)} euros
+=========================
             `.trim();
 
         // Create authentication string for Basic Auth
@@ -445,7 +476,6 @@ Date de retrait : ${orderDetails.pickupDate} à ${orderDetails.pickupTime}
           "Error printing notification:",
           JSON.stringify(printError, null, 2)
         );
-        // Don't fail the whole request if printing fails
       }
     }
 

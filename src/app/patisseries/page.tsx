@@ -1,12 +1,25 @@
-import Image from 'next/image';
+'use client'
+
+import Image from 'next/image'
 import productsData from '@/data/products.json'
 import { Product } from '@/types/product'
+import { useCart } from '@/context/CartContext'
 
 export default function PatisseriesPage() {
   const products = productsData.products as Product[]
   const pastries = products.filter(
-    (product) => product.category === 'patisserie'
-  ) as Product[];
+    (product) => product.category === 'CAKE'
+  ) as Product[]
+
+  const { addToCart } = useCart()
+
+  const handleAddToCart = (pastry: Product) => {
+    addToCart({
+      ...pastry,
+      size: 'individuel',
+      quantity: 1
+    })
+  }
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -38,6 +51,7 @@ export default function PatisseriesPage() {
               <div className="mt-4 flex justify-between items-center">
                 <span className="text-lg font-medium">{pastry.price}€</span>
                 <button 
+                  onClick={() => handleAddToCart(pastry)}
                   className="bg-patisserie-coral hover:bg-patisserie-yellow text-gray-800 px-4 py-2 rounded-full transition-colors"
                 >
                   Ajouter au panier
@@ -48,5 +62,5 @@ export default function PatisseriesPage() {
         ))}
       </div>
     </div>
-  );
-} 
+  )
+}

@@ -28,12 +28,12 @@ export default function Navbar() {
             <Link href="/patisseries" className={`${isActive('/patisseries')} transition-colors`}>
               Pâtisseries
             </Link>
-            <Link href="/click-and-collect" className={`${isActive('/click-and-collect')} transition-colors`}>
+            {/* <Link href="/click-and-collect" className={`${isActive('/click-and-collect')} transition-colors`}>
               Click & Collect
             </Link>
             <Link href="/contact" className={`${isActive('/contact')} transition-colors`}>
               Contact
-            </Link>
+            </Link> */}
             <Link 
               href="/panier" 
               className="bg-patisserie-mint hover:bg-patisserie-yellow text-gray-800 px-4 py-2 rounded-full transition-colors"
