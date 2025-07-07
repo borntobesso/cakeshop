@@ -8,7 +8,7 @@ import { Fragment } from 'react'
 interface CheckoutFormProps {
   isOpen: boolean
   onClose: () => void
-  onConfirm: (orderDetails: OrderDetails) => Promise<boolean> // onConfirm renvoie une promesse
+  onConfirm: (orderDetails: OrderDetails) => Promise<boolean>
 }
 
 interface OrderDetails {
@@ -36,7 +36,7 @@ export default function CheckoutForm({ isOpen, onClose, onConfirm }: CheckoutFor
   })
 
   const [errors, setErrors] = useState<Partial<OrderDetails>>({})
-  const [isSubmitting, setIsSubmitting] = useState(false) // Nouvel état local
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   const validateForm = () => {
     const newErrors: Partial<OrderDetails> = {}
@@ -49,17 +49,16 @@ export default function CheckoutForm({ isOpen, onClose, onConfirm }: CheckoutFor
     return Object.keys(newErrors).length === 0
   }
 
-  const handleSubmit = async (e: React.FormEvent) => { // La fonction devient async
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (validateForm()) {
-      setIsSubmitting(true) // Activer le spinner local
-      const success = await onConfirm(formData) // Attendre la résolution de la promesse
-      setIsSubmitting(false) // Désactiver le spinner local
+      setIsSubmitting(true)
+      const success = await onConfirm(formData)
+      setIsSubmitting(false)
       if (success) {
-        onClose() // Fermer la modal en cas de succès (le message sera affiché dans le parent)
+        onClose()
       } else {
-        // Vous pouvez choisir d'afficher un message d'erreur DANS la modal ici si vous préférez
-        // setErrors({ ...errors, general: 'Erreur lors de la commande.' });
+        // TODO : display an error message in the modal
       }
     }
   }

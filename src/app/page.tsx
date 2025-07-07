@@ -12,7 +12,7 @@ export default function Home() {
       <div className="bg-patisserie-mint py-16">
         <div className="container mx-auto px-4 text-center">
           <Image
-            src="/logo-JPG.webp" // Make sure to add your logo in the public folder
+            src="/logo-JPG.webp"
             alt="Logo Pâtisserie"
             width={150}
             height={150}

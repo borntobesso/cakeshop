@@ -18,18 +18,6 @@ const HIBOUTIK_STORE_ID = 1; // Store ID as specified
 const STORE_IP_ADDR = process.env.NEXT_PUBLIC_STORE_IP_ADDR;
 const HIBOUTIK_PRINTER_PORT = process.env.NEXT_PUBLIC_HIBOUTIK_PRINTER_PORT;
 
-// Log environment variables (without sensitive data)
-console.log("Environment check:", {
-  hasEmailConfig: !!(EMAIL_HOST && EMAIL_USER && EMAIL_PASS),
-  hasShopEmail: !!SHOP_EMAIL,
-  hasSenderEmail: !!SENDER_EMAIL,
-  hasHiboutikConfig: !!(
-    HIBOUTIK_API_LOGIN &&
-    HIBOUTIK_API_KEY &&
-    STORE_IP_ADDR
-  ),
-});
-
 // Create Nodemailer transporter
 const transporter = nodemailer.createTransport({
   host: EMAIL_HOST,
