@@ -6,16 +6,24 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "db:push": "dotenv -e .env.local -- npx prisma db push",
+    "db:pull": "dotenv -e .env.local -- npx prisma db pull",
+    "db:migrate": "dotenv -e .env.local -- npx prisma migrate dev",
+    "db:studio": "dotenv -e .env.local -- npx prisma studio",
+    "db:generate": "dotenv -e .env.local -- npx prisma generate",
+    "db:reset": "dotenv -e .env.local -- npx prisma migrate reset"
   },
   "dependencies": {
     "@headlessui/react": "^2.2.2",
+    "@prisma/client": "^6.13.0",
     "@sendgrid/mail": "^8.1.5",
     "messagebird": "^4.0.1",
     "next": "15.3.1",
     "node-fetch": "^3.3.2",
     "nodemailer": "^7.0.2",
     "ovh": "^2.0.3",
+    "prisma": "^6.13.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "twilio": "^5.5.2"
