@@ -385,10 +385,10 @@ Date de retrait : ${orderDetails.pickupDate} à ${orderDetails.pickupTime}
     };
 
     // Send both emails
-    await Promise.all([
-      transporter.sendMail(customerEmailOptions),
-      transporter.sendMail(ownerEmailOptions),
-    ]);
+    // await Promise.all([
+    //   transporter.sendMail(customerEmailOptions),
+    //   transporter.sendMail(ownerEmailOptions),
+    // ]);
 
     // Print order notification using Hiboutik API
     if (HIBOUTIK_API_LOGIN && HIBOUTIK_API_KEY && STORE_IP_ADDR) {
@@ -435,30 +435,30 @@ TOTAL: ${orderDetails.totalPrice.toFixed(2)} euros
         ).toString("base64");
 
         // Send the print request
-        const printResponse = await fetch(
-          "https://fupatisserie.hiboutik.com/api/print/misc",
-          {
-            method: "POST",
-            headers: {
-              Accept: "application/json",
-              "Content-Type": "application/json",
-              Authorization: `Basic ${auth}`,
-            },
-            body: JSON.stringify({
-              store_id: HIBOUTIK_STORE_ID,
-              ip_address: STORE_IP_ADDR,
-              port: HIBOUTIK_PRINTER_PORT || "",
-              data: printContent,
-            }),
-          }
-        );
+        // const printResponse = await fetch(
+        //   "https://fupatisserie.hiboutik.com/api/print/misc",
+        //   {
+        //     method: "POST",
+        //     headers: {
+        //       Accept: "application/json",
+        //       "Content-Type": "application/json",
+        //       Authorization: `Basic ${auth}`,
+        //     },
+        //     body: JSON.stringify({
+        //       store_id: HIBOUTIK_STORE_ID,
+        //       ip_address: STORE_IP_ADDR,
+        //       port: HIBOUTIK_PRINTER_PORT || "",
+        //       data: printContent,
+        //     }),
+        //   }
+        // );
 
-        const printResult = await printResponse.json();
-        console.log("Print request result:", printResult);
+        // const printResult = await printResponse.json();
+        // console.log("Print request result:", printResult);
 
-        if (!printResponse.ok) {
-          console.error("Error printing:", printResult);
-        }
+        // if (!printResponse.ok) {
+        //   console.error("Error printing:", printResult);
+        // }
       } catch (printError) {
         console.error(
           "Error printing notification:",
