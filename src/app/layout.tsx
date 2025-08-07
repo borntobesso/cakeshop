@@ -1,8 +1,8 @@
-import './globals.css';
-import type { Metadata } from 'next';
-import Navbar from '@/components/Navbar';
+import "./globals.css";
+import type { Metadata } from "next";
+import Navbar from "@/components/Navbar";
+import Providers from "@/components/Providers";
 import { Inter } from "next/font/google";
-import { CartProvider } from "@/context/CartContext";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -19,7 +19,7 @@ export default function RootLayout({
   return (
     <html lang="fr">
       <body className={inter.className}>
-        <CartProvider>
+        <Providers>
           <Navbar />
           <main className="flex-grow">
             {children}
@@ -29,7 +29,7 @@ export default function RootLayout({
               <p className="text-gray-700">© 2025 Fu Pâtisserie - Tous droits réservés</p>
             </div>
           </footer>
-        </CartProvider>
+        </Providers>
       </body>
     </html>
   );
