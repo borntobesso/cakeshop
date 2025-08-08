@@ -6,7 +6,6 @@
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../src/app/generated/prisma-client"
 }
 
 datasource db {
@@ -70,4 +69,15 @@ model VerificationToken {
 
   @@id([identifier, token])
   @@map("verificationtokens")
+}
+
+model Order {
+  id  String @id @default(cuid())
+  userId  String
+  customerName  String
+  customerEmail String
+  customerPhone String?
+  items Json
+  totalAmount Float
+  paymentMethod String
 }

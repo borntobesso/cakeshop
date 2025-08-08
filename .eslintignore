@@ -1,0 +1,7 @@
+node_modules/
+.next/
+
+# Prisma generated files
+/prisma/generated/
+**/.prisma/
+**/prisma-client/
