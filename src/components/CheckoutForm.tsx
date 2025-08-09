@@ -1,9 +1,11 @@
-'use client'
+"use client"
 
-import { useState } from 'react'
-import { useCart } from '@/context/CartContext'
-import { Dialog, DialogPanel, DialogTitle, Transition, TransitionChild } from '@headlessui/react'
-import { Fragment } from 'react'
+import { useState } from "react"
+import { useCart } from "@/context/CartContext"
+import { Dialog, DialogPanel, DialogTitle, Transition, TransitionChild } from "@headlessui/react"
+import { Fragment } from "react"
+import PaymentOptions from "./PaymentOptions";
+
 
 interface CheckoutFormProps {
   isOpen: boolean
@@ -17,35 +19,43 @@ interface OrderDetails {
   phone: string
   pickupDate: string
   pickupTime: string
+  paymentMethod: "online" | "onsite"
+}
+
+type OrderErrors = {
+  [K in keyof OrderDetails]?: string
 }
 
 const timeSlots = [
-  '09:00', '09:30', '10:00', '10:30', '11:00', '11:30',
-  '12:00', '12:30', '13:00', '13:30', '14:00', '14:30',
-  '15:00', '15:30', '16:00', '16:30', '17:00', '17:30'
+  "09:00", "09:30", "10:00", "10:30", "11:00", "11:30",
+  "12:00", "12:30", "13:00", "13:30", "14:00", "14:30",
+  "15:00", "15:30", "16:00", "16:30", "17:00", "17:30"
 ]
 
 export default function CheckoutForm({ isOpen, onClose, onConfirm }: CheckoutFormProps) {
-  useCart()
+  const { getTotalPrice } = useCart();
+  
   const [formData, setFormData] = useState<OrderDetails>({
-    customerName: '',
-    email: '',
-    phone: '',
-    pickupDate: '',
-    pickupTime: ''
+    customerName: "",
+    email: "",
+    phone: "",
+    pickupDate: "",
+    pickupTime: "",
+    paymentMethod: "online"
   })
 
-  const [errors, setErrors] = useState<Partial<OrderDetails>>({})
+  const [errors, setErrors] = useState<OrderErrors>({})
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   const validateForm = () => {
-    const newErrors: Partial<OrderDetails> = {}
-    if (!formData.customerName) newErrors.customerName = 'Le nom est requis'
-    if (!formData.email) newErrors.email = 'L\'email est requis'
-    if (!formData.phone) newErrors.phone = 'Le numéro de téléphone est requis'
-    if (!formData.pickupDate) newErrors.pickupDate = 'La date de retrait est requise'
-    if (!formData.pickupTime) newErrors.pickupTime = 'L\'heure de retrait est requise'
-    setErrors(newErrors)
+    const newErrors: OrderErrors = {}
+    if (!formData.customerName) newErrors.customerName = "Le nom est requis"
+    if (!formData.email) newErrors.email = "L\'email est requis"
+    if (!formData.phone) newErrors.phone = "Le numéro de téléphone est requis"
+    if (!formData.pickupDate) newErrors.pickupDate = "La date de retrait est requise"
+    if (!formData.pickupTime) newErrors.pickupTime = "L\'heure de retrait est requise"
+    if (!formData.paymentMethod) newErrors.paymentMethod = "Le mode de paiement est requis"
+    setErrors(newErrors);
     return Object.keys(newErrors).length === 0
   }
 
@@ -62,17 +72,21 @@ export default function CheckoutForm({ isOpen, onClose, onConfirm }: CheckoutFor
       }
     }
   }
+  
+  const handelPaymentMethodChange = (method: "online" | "onsite") => {
+    setFormData({ ...formData, paymentMethod: method });
+  }
 
   const getMinDate = () => {
     const date = new Date()
     date.setDate(date.getDate() + 2)
-    return date.toISOString().split('T')[0]
+    return date.toISOString().split("T")[0]
   }
 
   const getMaxDate = () => {
     const date = new Date()
     date.setDate(date.getDate() + 14)
-    return date.toISOString().split('T')[0]
+    return date.toISOString().split("T")[0]
   }
   return (
     <Transition appear show={isOpen} as={Fragment}>
@@ -100,7 +114,7 @@ export default function CheckoutForm({ isOpen, onClose, onConfirm }: CheckoutFor
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <DialogPanel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
+              <DialogPanel className="w-full max-w-2xl transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
                 <DialogTitle
                   as="h3"
                   className="text-lg font-medium leading-6 text-gray-900"
@@ -108,35 +122,42 @@ export default function CheckoutForm({ isOpen, onClose, onConfirm }: CheckoutFor
                   Détails de la commande
                 </DialogTitle>
 
-                <form onSubmit={handleSubmit} className="mt-4 space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">
-                      Nom complet
-                    </label>
-                    <input
-                      type="text"
-                      value={formData.customerName}
-                      onChange={(e) => setFormData({ ...formData, customerName: e.target.value })}
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-patisserie-coral focus:ring-patisserie-coral"
-                    />
-                    {errors.customerName && (
-                      <p className="mt-1 text-sm text-red-600">{errors.customerName}</p>
-                    )}
-                  </div>
+                <form onSubmit={handleSubmit} className="space-y-6">
+                  <PaymentOptions
+                    totalAmount={getTotalPrice()}
+                    selectedMethod={formData.paymentMethod}
+                    onPaymentMethodChange={handelPaymentMethodChange}
+                  />
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700">
+                        Nom complet
+                      </label>
+                      <input
+                        type="text"
+                        value={formData.customerName}
+                        onChange={(e) => setFormData({ ...formData, customerName: e.target.value })}
+                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-patisserie-coral focus:ring-patisserie-coral"
+                      />
+                      {errors.customerName && (
+                        <p className="mt-1 text-sm text-red-600">{errors.customerName}</p>
+                      )}
+                    </div>
 
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">
-                      Email
-                    </label>
-                    <input
-                      type="email"
-                      value={formData.email}
-                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-patisserie-coral focus:ring-patisserie-coral"
-                    />
-                    {errors.email && (
-                      <p className="mt-1 text-sm text-red-600">{errors.email}</p>
-                    )}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700">
+                        Email
+                      </label>
+                      <input
+                        type="email"
+                        value={formData.email}
+                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-patisserie-coral focus:ring-patisserie-coral"
+                      />
+                      {errors.email && (
+                        <p className="mt-1 text-sm text-red-600">{errors.email}</p>
+                      )}
+                    </div>
                   </div>
 
                   <div>
@@ -153,43 +174,45 @@ export default function CheckoutForm({ isOpen, onClose, onConfirm }: CheckoutFor
                       <p className="mt-1 text-sm text-red-600">{errors.phone}</p>
                     )}
                   </div>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700">
+                        Date de retrait
+                      </label>
+                      <input
+                        type="date"
+                        min={getMinDate()}
+                        max={getMaxDate()}
+                        value={formData.pickupDate}
+                        onChange={(e) => setFormData({ ...formData, pickupDate: e.target.value })}
+                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-patisserie-coral focus:ring-patisserie-coral"
+                      />
+                      {errors.pickupDate && (
+                        <p className="mt-1 text-sm text-red-600">{errors.pickupDate}</p>
+                      )}
+                    </div>
 
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">
-                      Date de retrait
-                    </label>
-                    <input
-                      type="date"
-                      min={getMinDate()}
-                      max={getMaxDate()}
-                      value={formData.pickupDate}
-                      onChange={(e) => setFormData({ ...formData, pickupDate: e.target.value })}
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-patisserie-coral focus:ring-patisserie-coral"
-                    />
-                    {errors.pickupDate && (
-                      <p className="mt-1 text-sm text-red-600">{errors.pickupDate}</p>
-                    )}
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">
-                      Heure de retrait
-                    </label>
-                    <select
-                      value={formData.pickupTime}
-                      onChange={(e) => setFormData({ ...formData, pickupTime: e.target.value })}
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-patisserie-coral focus:ring-patisserie-coral"
-                    >
-                      <option value="">Sélectionnez une heure</option>
-                      {timeSlots.map((time) => (
-                        <option key={time} value={time}>
-                          {time}
-                        </option>
-                      ))}
-                    </select>
-                    {errors.pickupTime && (
-                      <p className="mt-1 text-sm text-red-600">{errors.pickupTime}</p>
-                    )}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700">
+                        Heure de retrait
+                      </label>
+                      <select
+                        value={formData.pickupTime}
+                        onChange={(e) => setFormData({ ...formData, pickupTime: e.target.value })}
+                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-patisserie-coral focus:ring-patisserie-coral"
+                      >
+                        <option value="">Sélectionnez une heure</option>
+                        {timeSlots.map((time) => (
+                          <option key={time} value={time}>
+                            {time}
+                          </option>
+                        ))}
+                      </select>
+                      {errors.pickupTime && (
+                        <p className="mt-1 text-sm text-red-600">{errors.pickupTime}</p>
+                      )}
+                    </div>
                   </div>
 
                   <div className="mt-6 flex justify-end gap-3">
@@ -210,7 +233,9 @@ export default function CheckoutForm({ isOpen, onClose, onConfirm }: CheckoutFor
                           <span className="ml-2">Traitement...</span>
                         </div>
                       ) : (
-                        'Confirmer la commande'
+                        formData.paymentMethod === "online"
+                          ? "Procéder au paiement"
+                          : "Confirmer la commande"
                       )}
                     </button>
                   </div>

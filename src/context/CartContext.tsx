@@ -1,6 +1,6 @@
-'use client'
+"use client"
 
-import { createContext, useContext, useState, ReactNode } from 'react'
+import { createContext, useContext, useState, ReactNode } from "react"
 
 interface CartItem {
   id: number | string
@@ -18,6 +18,8 @@ interface CartContextType {
   removeFromCart: (id: number | string) => void
   updateQuantity: (id: number | string, quantity: number) => void
   clearCart: () => void
+  getTotalPrice: () => number
+  getTotalItems: () => number
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined)
@@ -54,6 +56,16 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const clearCart = () => {
     setItems([])
   }
+  
+  const getTotalPrice = () => {
+    return items.reduce((total, item) => {
+      return total + (item.price * item.quantity)
+    }, 0);
+  }
+  
+  const getTotalItems = () => {
+    return items.reduce((total, item) => total + item.quantity, 0);
+  }
 
   return (
     <CartContext.Provider
@@ -63,6 +75,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
         removeFromCart,
         updateQuantity,
         clearCart,
+        getTotalPrice,
+        getTotalItems
       }}
     >
       {children}
@@ -73,7 +87,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
 export function useCart() {
   const context = useContext(CartContext)
   if (context === undefined) {
-    throw new Error('useCart must be used within a CartProvider')
+    throw new Error("useCart must be used within a CartProvider")
   }
   return context
 } 

@@ -8,8 +8,8 @@ import { useSession, signOut } from "next-auth/react";
 export default function Navbar() {
   const pathname = usePathname();
   const { data: session, status } = useSession(); 
-  const { items } = useCart();
-  const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
+  const { getTotalItems } = useCart();
+  const totalItems = getTotalItems();
   
   const isActive = (path: string) => {
     return pathname === path ? 'text-patisserie-coral font-medium' : 'text-gray-600 hover:text-patisserie-coral';

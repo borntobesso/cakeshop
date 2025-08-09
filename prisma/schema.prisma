@@ -58,6 +58,7 @@ model User {
 
   accounts Account[]
   sessions Session[]
+  orders   Order[]
 
   @@map("users")
 }
@@ -72,12 +73,34 @@ model VerificationToken {
 }
 
 model Order {
-  id  String @id @default(cuid())
-  userId  String
+  id            String   @id @default(cuid())
+  userId        String
   customerName  String
   customerEmail String
   customerPhone String?
-  items Json
-  totalAmount Float
-  paymentMethod String
+  items         Json
+  totalAmount   Float
+  paymentMethod String // "online" | "onsite"
+  paymentStatus String // "pending" | "paid" | "failed"
+  specialCode   String?
+  pickupDate    DateTime
+  pickupTime    String
+  status        String   @default("pending") // "pending" | "confirmed" | "ready"
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("orders")
+}
+
+model SpecialCode {
+  id        String    @id @default(cuid())
+  code      String    @unique
+  isUsed    Boolean   @default(false)
+  expiresAt DateTime
+  createdAt DateTime  @default(now())
+  usedAt    DateTime?
+
+  @@map("special_codes")
 }
