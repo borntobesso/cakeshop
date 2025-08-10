@@ -35,9 +35,21 @@ export default function AdminDashboard() {
 					<h2 className="text-xl font-semibold mb-4">
 						Bienvenue, {session.user?.name}!
 					</h2>
-					<p className="text-gray-600">
-						Interface d&apos;administration en cours de développement...
-					</p>
+					<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+						<div className="bg-white rounded-lg shadow p-6">
+							<h3 className="text-lg font-semibold mb-4">Codes Spéciaux</h3>
+							<p className="text-gray-600 mb-4">
+								Gérer les codes permettant le paiement sur place pour les nouveaux clients
+							</p>
+							<a
+								href="/admin/special-codes"
+								className="bg-patisserie-coral hover:bg-patisserie-yellow text-white px-4 py-2 rounded-lg transition-colors"
+							>
+								Gérer les codes
+							</a>
+						</div>
+						{/* Other features.. */}
+					</div>
 				</div>
 			</div>
 		</div>
