@@ -1,10 +1,13 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useCallback, useEffect } from "react"
 import { useCart } from "@/context/CartContext"
 import { Dialog, DialogPanel, DialogTitle, Transition, TransitionChild } from "@headlessui/react"
 import { Fragment } from "react"
 import PaymentOptions from "./PaymentOptions";
+import { stripePromise } from "@/lib/stripe-client";
+import CustomAlertDialog from "./CustomAlertDialog";
+import { TrunkContextImpl } from "twilio/lib/rest/routes/v2/trunk"
 
 
 interface CheckoutFormProps {
@@ -20,6 +23,7 @@ interface OrderDetails {
   pickupDate: string
   pickupTime: string
   paymentMethod: "online" | "onsite"
+  specialCode?: string
 }
 
 type OrderErrors = {
@@ -33,7 +37,7 @@ const timeSlots = [
 ]
 
 export default function CheckoutForm({ isOpen, onClose, onConfirm }: CheckoutFormProps) {
-  const { getTotalPrice } = useCart();
+  const { items, getTotalPrice } = useCart();
   
   const [formData, setFormData] = useState<OrderDetails>({
     customerName: "",
@@ -42,55 +46,274 @@ export default function CheckoutForm({ isOpen, onClose, onConfirm }: CheckoutFor
     pickupDate: "",
     pickupTime: "",
     paymentMethod: "online"
-  })
+  });
 
-  const [errors, setErrors] = useState<OrderErrors>({})
-  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [errors, setErrors] = useState<OrderErrors>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  
+  const [paymentData, setPaymentData] = useState({
+    specialCode: "",
+    isCodeValid: false
+  });
+  
+  const [showValidationErrors, setShowValidationErrors] = useState(false);
+  
+  const [alertState, setAlertState] = useState<{
+    isOpen: boolean;
+    title: string;
+    message: string;
+    type: "success" | "error" | "info";
+    shouldCloseMainForm: boolean;
+  }>({
+    isOpen: false,
+    title: "",
+    message: "",
+    type: "info",
+    shouldCloseMainForm: false
+  });
+  
+  useEffect(() => {
+    if (isOpen) {
+        setShowValidationErrors(false);
+        setErrors({});
+        setFormData({
+            customerName: "",
+            email: "",
+            phone: "",
+            pickupDate: "",
+            pickupTime: "",
+            paymentMethod: "online"
+        });
+        setPaymentData({
+            specialCode: "",
+            isCodeValid: false
+        });
+        setAlertState({
+            isOpen: false,
+            title: "",
+            message: "",
+            type: "info",
+            shouldCloseMainForm: false
+        });
+    }
+  }, [isOpen]);
 
   const validateForm = () => {
-    const newErrors: OrderErrors = {}
-    if (!formData.customerName) newErrors.customerName = "Le nom est requis"
-    if (!formData.email) newErrors.email = "L\'email est requis"
-    if (!formData.phone) newErrors.phone = "Le numéro de téléphone est requis"
-    if (!formData.pickupDate) newErrors.pickupDate = "La date de retrait est requise"
-    if (!formData.pickupTime) newErrors.pickupTime = "L\'heure de retrait est requise"
-    if (!formData.paymentMethod) newErrors.paymentMethod = "Le mode de paiement est requis"
+    const newErrors: OrderErrors = {};
+    
+    if (!formData.customerName) newErrors.customerName = "Le nom est requis";
+    if (!formData.email) newErrors.email = "L\'email est requis";
+    if (!formData.phone) newErrors.phone = "Le numéro de téléphone est requis";
+    if (!formData.pickupDate) newErrors.pickupDate = "La date de retrait est requise";
+    if (!formData.pickupTime) newErrors.pickupTime = "L\'heure de retrait est requise";
+    if (!formData.paymentMethod) newErrors.paymentMethod = "Le mode de paiement est requis";
+    
     setErrors(newErrors);
-    return Object.keys(newErrors).length === 0
+    return (Object.keys(newErrors).length === 0);
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (validateForm()) {
-      setIsSubmitting(true)
-      const success = await onConfirm(formData)
-      setIsSubmitting(false)
-      if (success) {
-        onClose()
+    e.preventDefault();
+    
+    const isValid = validateForm();
+    
+    if (!isValid) {
+        setShowValidationErrors(true);
+        return;
+    }
+    
+    setShowValidationErrors(false);
+    setIsSubmitting(true);
+    
+    try {
+      if (formData.paymentMethod === "online") {
+        await handleStripePayment();
       } else {
-        // TODO : display an error message in the modal
+        const orderDetails = {
+          ...formData,
+          specialCode: paymentData.isCodeValid ? paymentData.specialCode : undefined
+        };
+        
+        const response = await fetch("/api/orders/create", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            customerName: formData.customerName,
+            email: formData.email,
+            phone: formData.phone,
+            pickupDate: formData.pickupDate,
+            pickupTime: formData.pickupTime,
+            paymentMethod: formData.paymentMethod,
+            specialCode: paymentData.isCodeValid ? paymentData.specialCode : undefined,
+            items: items.map(item => ({
+              id: item.id,
+              name: item.name,
+              price: item.price,
+              quantity: item.quantity,
+              size: item.size
+            }))
+          })
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          console.log("Order created:", data);
+          await onConfirm(orderDetails);
+        //   handleClose();
+          setAlertState({
+            isOpen: true,
+            title: "Commande créée!",
+            message: "Votre commande a été créée avec succès.",
+            type: "success",
+            shouldCloseMainForm: true
+          });
+        } else {
+          const errorData = await response.json();
+          console.error("Order creation failed:", errorData);
+          setAlertState({
+            isOpen: true,
+            title: "Erreur",
+            message: "Une erreur est survenue lors de la création de la commande.",
+            type: "error",
+            shouldCloseMainForm: false
+          });
+        }
       }
+    } catch (error) {
+      console.error("Payment error: ", error);
+      setAlertState({
+        isOpen: true,
+        title: "Erreur de paiement",
+        message: "Une erreur est survenue lors du traitement du paiement.",
+        type: "error",
+        shouldCloseMainForm: false
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
+  
+  const handleStripePayment = async () => {
+    try {
+      const response = await fetch("/api/checkout/create-session", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          items: items.map(item => ({
+            id: item.id,
+            name: item.name,
+            price: item.price,
+            quantity: item.quantity,
+            size: item.size
+          })),
+          customerInfo: {
+            customerName: formData.customerName,
+            email: formData.email,
+            phone: formData.phone,
+            pickupDate: formData.pickupDate,
+            pickupTime: formData.pickupTime
+          },
+          specialCode: paymentData.isCodeValid ? paymentData.specialCode : undefined,
+          paymentMethod: formData.paymentMethod
+        })
+      });
+      
+      if (!response.ok) {
+        throw new Error("Failed to create checkout session");
+      }
+      
+      const { sessionId, url } = await response.json();
+      
+      // Redirect to Stripe Checkout
+      if (url) {
+        window.location.href = url;
+      } else {
+        // Or use Stripe.js
+        const stripe = await stripePromise;
+        const { error } = await stripe!.redirectToCheckout({ sessionId });
+        
+        if (error) {
+          throw error;
+        }
+      }
+    } catch (error) {
+        setAlertState({
+            isOpen: true,
+            title: "Erreur Stripe",
+            message: "Une erreur est survenue lors de la redirection vers Stripe Checkout.",
+            type: "error",
+            shouldCloseMainForm: false
+          });
+        throw error;
     }
   }
   
   const handelPaymentMethodChange = (method: "online" | "onsite") => {
     setFormData({ ...formData, paymentMethod: method });
   }
+  
+  // Receive special code info from PaymentOptions component
+    const handlePaymentDataChange = useCallback((data: { specialCode: string; isCodeValid: boolean; }) => {
+        setPaymentData(data);
+    }, []);
+    
+    const showCustomAlertFromChild = useCallback((title: string, message: string, type: "success" | "error" | "info", closeMainForm: boolean = false) => {
+        setAlertState({ isOpen: true, title, message, type, shouldCloseMainForm: closeMainForm });
+    }, []);
 
   const getMinDate = () => {
-    const date = new Date()
-    date.setDate(date.getDate() + 2)
-    return date.toISOString().split("T")[0]
+    const date = new Date();
+    date.setDate(date.getDate() + 2);
+    return date.toISOString().split("T")[0];
   }
 
   const getMaxDate = () => {
-    const date = new Date()
-    date.setDate(date.getDate() + 14)
-    return date.toISOString().split("T")[0]
+    const date = new Date();
+    date.setDate(date.getDate() + 14);
+    return date.toISOString().split("T")[0];
   }
+  
+  const handleClose = () => {
+    setShowValidationErrors(false);
+    setErrors({});
+    setFormData({
+      customerName: "",
+      email: "",
+      phone: "",
+      pickupDate: "",
+      pickupTime: "",
+      paymentMethod: "online"
+    });
+    setPaymentData({
+      specialCode: "",
+      isCodeValid: false
+    });
+    setAlertState({
+        isOpen: false,
+        title: "",
+        message: "",
+        type: "info",
+        shouldCloseMainForm: false
+    });
+    onClose();
+  }
+  
+  const handleCloseAlert = () => {
+    const shouldAlsoCloseMainForm = alertState.shouldCloseMainForm;
+    setAlertState((prev) => ({
+        isOpen: false,
+        title: "",
+        message: "",
+        type: "info",
+        shouldCloseMainForm: false
+    }));
+    if (shouldAlsoCloseMainForm)
+        handleClose();
+  }
+  
   return (
     <Transition appear show={isOpen} as={Fragment}>
-      <Dialog as="div" className="relative z-50" onClose={onClose}>
+      <Dialog as="div" className="relative z-50" onClose={handleClose}>
         <TransitionChild
           as={Fragment}
           enter="ease-out duration-300"
@@ -127,6 +350,8 @@ export default function CheckoutForm({ isOpen, onClose, onConfirm }: CheckoutFor
                     totalAmount={getTotalPrice()}
                     selectedMethod={formData.paymentMethod}
                     onPaymentMethodChange={handelPaymentMethodChange}
+                    onPaymentDataChange={handlePaymentDataChange}
+                    showCustomAlert={showCustomAlertFromChild}
                   />
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
@@ -139,7 +364,7 @@ export default function CheckoutForm({ isOpen, onClose, onConfirm }: CheckoutFor
                         onChange={(e) => setFormData({ ...formData, customerName: e.target.value })}
                         className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-patisserie-coral focus:ring-patisserie-coral"
                       />
-                      {errors.customerName && (
+                      {showValidationErrors && errors.customerName && (
                         <p className="mt-1 text-sm text-red-600">{errors.customerName}</p>
                       )}
                     </div>
@@ -154,7 +379,7 @@ export default function CheckoutForm({ isOpen, onClose, onConfirm }: CheckoutFor
                         onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                         className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-patisserie-coral focus:ring-patisserie-coral"
                       />
-                      {errors.email && (
+                      {showValidationErrors && errors.email && (
                         <p className="mt-1 text-sm text-red-600">{errors.email}</p>
                       )}
                     </div>
@@ -170,7 +395,7 @@ export default function CheckoutForm({ isOpen, onClose, onConfirm }: CheckoutFor
                       onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                       className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-patisserie-coral focus:ring-patisserie-coral"
                     />
-                    {errors.phone && (
+                    {showValidationErrors && errors.phone && (
                       <p className="mt-1 text-sm text-red-600">{errors.phone}</p>
                     )}
                   </div>
@@ -188,7 +413,7 @@ export default function CheckoutForm({ isOpen, onClose, onConfirm }: CheckoutFor
                         onChange={(e) => setFormData({ ...formData, pickupDate: e.target.value })}
                         className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-patisserie-coral focus:ring-patisserie-coral"
                       />
-                      {errors.pickupDate && (
+                      {showValidationErrors && errors.pickupDate && (
                         <p className="mt-1 text-sm text-red-600">{errors.pickupDate}</p>
                       )}
                     </div>
@@ -209,7 +434,7 @@ export default function CheckoutForm({ isOpen, onClose, onConfirm }: CheckoutFor
                           </option>
                         ))}
                       </select>
-                      {errors.pickupTime && (
+                      {showValidationErrors && errors.pickupTime && (
                         <p className="mt-1 text-sm text-red-600">{errors.pickupTime}</p>
                       )}
                     </div>
@@ -219,13 +444,14 @@ export default function CheckoutForm({ isOpen, onClose, onConfirm }: CheckoutFor
                     <button
                       type="button"
                       className="inline-flex justify-center rounded-md border border-transparent bg-gray-100 px-4 py-2 text-sm font-medium text-gray-900 hover:bg-gray-200"
-                      onClick={onClose}
+                      onClick={handleClose}
                     >
                       Annuler
                     </button>
                     <button
                       type="submit"
                       className="inline-flex justify-center rounded-md border border-transparent bg-patisserie-coral px-4 py-2 text-sm font-medium text-white hover:bg-patisserie-yellow"
+                      disabled={isSubmitting}
                     >
                       {isSubmitting ? (
                         <div className="flex items-center justify-center">
@@ -245,6 +471,14 @@ export default function CheckoutForm({ isOpen, onClose, onConfirm }: CheckoutFor
           </div>
         </div>
       </Dialog>
+      
+      <CustomAlertDialog
+        isOpen={alertState.isOpen}
+        title={alertState.title}
+        message={alertState.message}
+        type={alertState.type}
+        onClose={handleCloseAlert}
+      />
     </Transition>
   )
 } 

@@ -20,6 +20,7 @@
     "@headlessui/react": "^2.2.2",
     "@prisma/client": "^6.13.0",
     "@sendgrid/mail": "^8.1.5",
+    "@stripe/stripe-js": "^7.8.0",
     "bcryptjs": "^3.0.2",
     "messagebird": "^4.0.1",
     "next": "15.3.1",
@@ -30,6 +31,7 @@
     "prisma": "^6.13.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "stripe": "^18.4.0",
     "twilio": "^5.5.2"
   },
   "devDependencies": {
@@ -40,6 +42,7 @@
     "@types/nodemailer": "^6.4.17",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/stripe": "^8.0.416",
     "autoprefixer": "^10.4.14",
     "eslint": "^9",
     "eslint-config-next": "15.3.1",
