@@ -1,0 +1,21 @@
+name: Send Pickup Reminders
+
+on:
+  schedule:
+    # Run every 5 minutes
+    - cron: '*/15 * * * *'
+  workflow_dispatch: # Allow manual trigger
+
+jobs:
+  send-reminders:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send Pickup Reminders
+        run: |
+          curl -X POST \
+            -H "Content-Type: application/json" \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET_TOKEN }}" \
+            "${{ secrets.APP_URL }}/api/cron/send-reminders"
+        env:
+          APP_URL: ${{ secrets.APP_URL }}
+          CRON_SECRET_TOKEN: ${{ secrets.CRON_SECRET_TOKEN }}
