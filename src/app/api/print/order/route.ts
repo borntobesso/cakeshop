@@ -12,7 +12,7 @@ const HIBOUTIK_PRINTER_PORT = process.env.NEXT_PUBLIC_HIBOUTIK_PRINTER_PORT;
 /**
  * Validate Hiboutik print API response
  */
-export function validatePrintResult(printResult: any): { success: boolean; error?: string } {
+function validatePrintResult(printResult: any): { success: boolean; error?: string } {
   // Check if response exists
   if (!printResult) {
     return { success: false, error: "No response from printer API" };
