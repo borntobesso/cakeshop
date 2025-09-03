@@ -4,7 +4,7 @@
  */
 
 // Import the validation function
-import { validatePrintResult } from '@/app/api/print/order/route';
+import { validatePrintResult } from "@/lib/print-utils";
 
 interface TestCase {
   name: string;
