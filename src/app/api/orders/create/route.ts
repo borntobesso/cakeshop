@@ -3,6 +3,8 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth-config";
 import { prisma } from "@/lib/prisma";
 import { useSpecialCode } from "@/lib/payment-utils";
+import { sendAllOrderNotifications, sendCustomerNotificationsOnly, sendMailNotificationsOnly } from "@/lib/order-notifications";
+import { generateOrderNumber } from "@/lib/order-utils";
 
 interface CreateOrderRequest {
   customerName: string;
@@ -67,8 +69,12 @@ export async function POST(request: Request) {
       0
     );
 
+    // Generate human-readable order number
+    const orderNumber = await generateOrderNumber();
+
     const order = await prisma.order.create({
       data: {
+        orderNumber,
         userId: session.user.id,
         customerName,
         customerEmail: email,
@@ -85,14 +91,10 @@ export async function POST(request: Request) {
     });
 
     try {
-      await Promise.all([
-        sendOrderConfirmationEmail(order),
-        sendShopSMSNotification(order),
-        printOrderReceipt(order),
-        schedulePickupReminder(order),
-      ]);
+      // await sendAllOrderNotifications(order);
+      await sendMailNotificationsOnly(order);
     } catch (notificationError) {
-      console.error("Notificationerror:", notificationError);
+      console.error("Notification error:", notificationError);
     }
 
     return NextResponse.json({
@@ -112,112 +114,3 @@ export async function POST(request: Request) {
   }
 }
 
-async function sendOrderConfirmationEmail(order: any) {
-  try {
-    const response = await fetch(
-      `${process.env.NEXTAUTH_URL}/api/notifications/email`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          type: "order_confirmation",
-          order,
-          to: order.customerEmail,
-        }),
-      }
-    );
-
-    if (!response.ok) {
-      throw new Error("Email sending failed");
-    }
-  } catch (error) {
-    console.error("Email notification error:", error);
-    throw error;
-  }
-}
-
-async function sendShopSMSNotification(order: any) {
-  try {
-    const response = await fetch(
-      `${process.env.NEXTAUTH_URL}/api/notifications/sms`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          type: "new_order",
-          order,
-          to: process.env.NEXT_PUBLIC_SHOP_PHONE,
-        }),
-      }
-    );
-
-    if (!response.ok) {
-      throw new Error("SMS sending failed");
-    }
-  } catch (error) {
-    console.error("SMS notification error:", error);
-    throw error;
-  }
-}
-
-async function printOrderReceipt(order: any) {
-  try {
-    await Promise.all([
-      fetch(`${process.env.NEXTAUTH_URL}/api/print/order`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(order),
-      }),
-      fetch(`${process.env.NEXTAUTH_URL}/api/print/order`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(order),
-      }),
-    ]);
-  } catch (error) {
-    console.error("Print error:", error);
-
-    try {
-      await fetch(
-        `${process.env.NEXTAUTH_URL}/api/notifications/print-failure`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ order, error: (error as any).message }),
-        }
-      );
-    } catch (notifyError) {
-      console.error("Print failure notification error:", notifyError);
-    }
-
-    throw error;
-  }
-}
-
-async function schedulePickupReminder(order: any) {
-  try {
-    const pickupDateTime = new Date(
-      `${order.pickupDate.toISOString().split("T")[0]}T${order.pickupTime}`
-    );
-    const reminderTime = new Date(
-      pickupDateTime.getTime() - 24 * 60 * 60 * 1000
-    ); // 24 hours in advance
-
-    if (reminderTime > new Date()) {
-      await fetch(
-        `${process.env.NEXTAUTH_URL}/api/notifications/schedule-reminder`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            order,
-            reminderTime: reminderTime.toISOString(),
-          }),
-        }
-      );
-    }
-  } catch (error) {
-    console.error("Reminder scheduling error:", error);
-    throw error;
-  }
-}

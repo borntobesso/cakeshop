@@ -134,32 +134,9 @@ export default function CheckoutForm({ isOpen, onClose, onConfirm }: CheckoutFor
           specialCode: paymentData.isCodeValid ? paymentData.specialCode : undefined
         };
         
-        const response = await fetch("/api/orders/create", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            customerName: formData.customerName,
-            email: formData.email,
-            phone: formData.phone,
-            pickupDate: formData.pickupDate,
-            pickupTime: formData.pickupTime,
-            paymentMethod: formData.paymentMethod,
-            specialCode: paymentData.isCodeValid ? paymentData.specialCode : undefined,
-            items: items.map(item => ({
-              id: item.id,
-              name: item.name,
-              price: item.price,
-              quantity: item.quantity,
-              size: item.size
-            }))
-          })
-        });
+        const success = await onConfirm(orderDetails);
         
-        if (response.ok) {
-          const data = await response.json();
-          console.log("Order created:", data);
-          await onConfirm(orderDetails);
-        //   handleClose();
+        if (success) {
           setAlertState({
             isOpen: true,
             title: "Commande créée!",
@@ -168,8 +145,6 @@ export default function CheckoutForm({ isOpen, onClose, onConfirm }: CheckoutFor
             shouldCloseMainForm: true
           });
         } else {
-          const errorData = await response.json();
-          console.error("Order creation failed:", errorData);
           setAlertState({
             isOpen: true,
             title: "Erreur",

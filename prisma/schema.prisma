@@ -74,6 +74,7 @@ model VerificationToken {
 
 model Order {
   id            String   @id @default(cuid())
+  orderNumber   String   @unique // Human-readable order number (e.g., "290824-001")
   userId        String
   customerName  String
   customerEmail String
@@ -90,6 +91,7 @@ model Order {
   updatedAt     DateTime @updatedAt
 
   user User @relation(fields: [userId], references: [id])
+  scheduledReminders ScheduledReminder[]
 
   @@map("orders")
 }
@@ -103,4 +105,22 @@ model SpecialCode {
   usedAt    DateTime?
 
   @@map("special_codes")
+}
+
+model ScheduledReminder {
+  id            String   @id @default(cuid())
+  orderId       String
+  orderNumber   String
+  customerPhone String
+  customerName  String
+  reminderTime  DateTime
+  pickupTime    String
+  pickupDate    DateTime
+  status        String   @default("pending") // "pending" | "sent" | "failed" | "cancelled"
+  createdAt     DateTime @default(now())
+  sentAt        DateTime?
+  
+  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@map("scheduled_reminders")
 }

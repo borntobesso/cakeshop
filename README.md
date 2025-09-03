@@ -66,12 +66,26 @@ This project is a **prototype** developed for a real pastry shop in Paris. It se
    NEXT_PUBLIC_SHOP_NAME="Your Pastry Shop"
    NEXT_PUBLIC_SENDER_EMAIL=noreply@example.com
    NEXT_PUBLIC_SHOP_EMAIL="Your Pastry Shop Email"
+   NEXT_PUBLIC_SHOP_PHONE="+33123456789"
+
+   # Twilio SMS Configuration
+   TWILIO_ACCOUNT_SID=your_twilio_account_sid
+   TWILIO_AUTH_TOKEN=your_twilio_auth_token
+   TWILIO_PHONE_NUMBER=+1234567890
 
    # Hiboutik Configuration
    NEXT_PUBLIC_HIBOUTIK_API_LOGIN=your_shop_login
    NEXT_PUBLIC_HIBOUTIK_API_KEY=your_hiboutik_api_key
    NEXT_PUBLIC_STORE_IP_ADDR=your_store_ip
    NEXT_PUBLIC_HIBOUTIK_PRINTER_PORT=your_shop_printer_port
+
+   # Database
+   DATABASE_URL="postgresql://..."
+   NEXTAUTH_URL="http://localhost:3000"
+   NEXTAUTH_SECRET="your_nextauth_secret"
+   
+   # Cron Job Security (for pickup reminders)
+   CRON_SECRET_TOKEN="your-random-secret-token-for-cron-jobs"
 
    ```
 

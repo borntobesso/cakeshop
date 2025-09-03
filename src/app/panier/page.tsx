@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { useCart } from '@/context/CartContext'
 import Image from 'next/image'
 import CheckoutForm from '@/components/CheckoutForm'
-import { sendOrderConfirmation } from '@/services/notificationService'
+import { useSession } from 'next-auth/react'
 
 interface OrderDetails {
   customerName: string
@@ -16,6 +16,7 @@ interface OrderDetails {
 
 export default function CartPage() {
   const { items, removeFromCart, updateQuantity, clearCart } = useCart()
+  const { data: session } = useSession()
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false)
   const [notification, setNotification] = useState<{ type: 'success' | 'error' | null; message: string | null }>({
     type: null,
@@ -27,27 +28,48 @@ export default function CartPage() {
   const handleCheckout = async (orderDetails: OrderDetails) => {
     setNotification({ type: null, message: null }) // Clear previous notifications
     
-    const orderData = {
-      ...orderDetails,
-      items: items.map(item => ({
-        name: item.name,
-        quantity: item.quantity,
-        price: item.price,
-        size: item.size
-      })),
-      totalPrice
+    if (!session) {
+      setNotification({ type: 'error', message: 'Vous devez être connecté pour passer commande.' })
+      return false
     }
 
-    const success = await sendOrderConfirmation(orderData)
-    if (success) {
-      clearCart()
-      setIsCheckoutOpen(false)
-      setNotification({ type: 'success', message: 'Votre commande a été enregistrée avec succès !' })
-    } else {
-      setIsCheckoutOpen(false)
+    try {
+      const response = await fetch('/api/orders/create', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          customerName: orderDetails.customerName,
+          email: orderDetails.email,
+          phone: orderDetails.phone,
+          pickupDate: orderDetails.pickupDate,
+          pickupTime: orderDetails.pickupTime,
+          paymentMethod: "onsite",
+          items: items.map(item => ({
+            id: item.id.toString(),
+            name: item.name,
+            quantity: item.quantity,
+            price: item.price,
+            size: item.size
+          }))
+        })
+      })
+
+      if (response.ok) {
+        clearCart()
+        // Don't close checkout here - let CheckoutForm handle it
+        // setIsCheckoutOpen(false)
+        setNotification({ type: 'success', message: 'Votre commande a été enregistrée avec succès !' })
+        return true
+      } else {
+        const errorData = await response.json()
+        setNotification({ type: 'error', message: errorData.error || 'Une erreur est survenue lors de l\'enregistrement de votre commande.' })
+        return false
+      }
+    } catch (error) {
+      console.error('Order creation error:', error)
       setNotification({ type: 'error', message: 'Une erreur est survenue lors de l\'enregistrement de votre commande. Veuillez réessayer.' })
+      return false
     }
-    return success;
   }
 
   const handleCloseCheckout = () => {

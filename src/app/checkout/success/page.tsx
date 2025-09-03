@@ -85,7 +85,9 @@ function SuccessContent() {
 						<div className="space-y-2 text-sm">
 							<div className="flex justify-between">
 								<span className="font-medium">Numéro de commande:</span>
-								<span className="font-mono">{orderDetails.id}</span>
+								<span className="font-mono text-lg font-bold text-patisserie-coral">
+									{orderDetails.orderNumber || orderDetails.id.slice(-8)}
+								</span>
 							</div>
 							<div className="flex justify-between">
 								<span className="font-medium">Date de retrait:</span>
