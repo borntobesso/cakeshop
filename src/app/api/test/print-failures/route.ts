@@ -174,7 +174,7 @@ export async function POST(request: Request) {
 async function testFullNotificationFlow(testScenario: TestScenario) {
   try {
     // Import the validation function to test it directly
-    const { validatePrintResult } = await import('@/app/api/print/order/route');
+    const { validatePrintResult } = await import('@/lib/print-utils');
     
     console.log(`🔍 Testing validation with mock response:`, testScenario.mockResponse);
     
