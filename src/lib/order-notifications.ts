@@ -468,7 +468,7 @@ export async function sendMailNotificationsOnly(order: any) {
     sendCustomerEmail: true,
     sendShopEmail: true,
     sendShopSMS: false,
-    printReceipts: true,
+    printReceipts: false,
     scheduleReminder: false,
   });
 }

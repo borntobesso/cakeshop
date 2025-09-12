@@ -124,3 +124,37 @@ model ScheduledReminder {
 
   @@map("scheduled_reminders")
 }
+
+model ProductCategory {
+  id          String   @id @default(cuid())
+  name        String   @unique // e.g., "Pâtisseries", "Gâteaux Entiers", "Café", "Brunch"
+  slug        String   @unique // e.g., "patisseries", "gateaux-entiers", "cafe", "brunch"
+  description String?
+  isPrincipal Boolean  @default(false) // true for categories shown in main nav
+  displayOrder Int     @default(0) // for ordering categories
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  products Product[]
+
+  @@map("product_categories")
+}
+
+model Product {
+  id              String          @id @default(cuid())
+  name            String
+  description     String
+  price           Float
+  image           String
+  isAvailable     Boolean         @default(true)
+  stock           Int             @default(0)
+  displayOrder    Int             @default(0)
+  categoryId      String
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  category        ProductCategory @relation(fields: [categoryId], references: [id])
+
+  @@map("products")
+}
