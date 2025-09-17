@@ -3,11 +3,12 @@ import { prisma } from '@/lib/prisma'
 
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const resolvedParams = await params
     const product = await prisma.product.findUnique({
-      where: { id: params.id },
+      where: { id: resolvedParams.id },
       select: {
         relatedProductIds: true,
         categoryId: true
@@ -21,7 +22,7 @@ export async function GET(
       )
     }
 
-    let relatedProducts = []
+    let relatedProducts: any[] = []
 
     if (product.relatedProductIds && Array.isArray(product.relatedProductIds)) {
       relatedProducts = await prisma.product.findMany({
@@ -46,11 +47,11 @@ export async function GET(
       const additionalProducts = await prisma.product.findMany({
         where: {
           categoryId: product.categoryId,
-          id: { not: params.id },
+          id: { not: resolvedParams.id },
           isAvailable: true,
           ...(relatedProducts.length > 0 && {
             id: { 
-              notIn: [...relatedProducts.map(p => p.id), params.id]
+              notIn: [...relatedProducts.map(p => p.id), resolvedParams.id]
             }
           })
         },
