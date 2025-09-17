@@ -109,14 +109,14 @@ export default function CartPage() {
                 <div className="flex items-center justify-between mt-4">
                   <div className="flex items-center gap-4">
                     <button
-                      onClick={() => updateQuantity(item.id, Math.max(1, item.quantity - 1))}
+                      onClick={() => updateQuantity(item.id, Math.max(1, item.quantity - 1), item.size)}
                       className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200"
                     >
                       -
                     </button>
                     <span className="w-8 text-center">{item.quantity}</span>
                     <button
-                      onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                      onClick={() => updateQuantity(item.id, item.quantity + 1, item.size)}
                       className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200"
                     >
                       +
@@ -125,7 +125,7 @@ export default function CartPage() {
                   <div className="flex items-center gap-4">
                     <span className="text-lg font-medium">{item.price * item.quantity}€</span>
                     <button
-                      onClick={() => removeFromCart(item.id)}
+                      onClick={() => removeFromCart(item.id, item.size)}
                       className="text-red-500 hover:text-red-700"
                     >
                       Supprimer

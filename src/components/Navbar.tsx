@@ -98,14 +98,9 @@ export default function Navbar() {
               {/* Cart */}
               <button 
                 onClick={toggleCart}
-                className="bg-patisserie-mint hover:bg-patisserie-yellow text-gray-800 px-4 py-2 rounded-full transition-colors relative"
+                className="bg-patisserie-mint hover:bg-patisserie-yellow text-gray-800 px-4 py-2 rounded-full transition-colors"
               >
                 Panier ({totalItems})
-                {totalItems > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-patisserie-coral text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                    {totalItems}
-                  </span>
-                )}
               </button>
 
               {/* User Authentication */}
@@ -147,14 +142,9 @@ export default function Navbar() {
             <div className="md:hidden flex items-center space-x-2">
               <button 
                 onClick={toggleCart}
-                className="bg-patisserie-mint hover:bg-patisserie-yellow text-gray-800 px-3 py-1 rounded-full text-sm transition-colors relative"
+                className="bg-patisserie-mint hover:bg-patisserie-yellow text-gray-800 px-3 py-1 rounded-full text-sm transition-colors"
               >
                 Panier ({totalItems})
-                {totalItems > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-patisserie-coral text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
-                    {totalItems}
-                  </span>
-                )}
               </button>
             </div>
           </div>
