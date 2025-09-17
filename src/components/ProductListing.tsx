@@ -53,7 +53,7 @@ export default function ProductListing({
 
     // Convert database product to cart format
     const cartItem = {
-      id: parseInt(product.id) || 0,
+      id: product.id, // Keep UUID string as-is, don't convert to integer
       name: product.name,
       description: product.description,
       price: product.price,
