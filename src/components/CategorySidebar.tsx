@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { ProductCategory } from '@/types/category'
 
@@ -74,14 +75,14 @@ export default function CategorySidebar({ isOpen, onClose }: CategorySidebarProp
           {loading ? (
             <div className="text-sm text-gray-500">Chargement...</div>
           ) : (
-            <nav className="space-y-1">
+            <nav className="space-y-2">
               {/* La maison first */}
               {lamaisonCategory && (
                 <Link
                   key={lamaisonCategory.id}
                   href={`/${lamaisonCategory.slug}`}
                   className={`
-                    block px-3 py-2 rounded-md text-sm font-medium transition-colors
+                    flex items-center px-3 rounded-md text-sm font-medium transition-colors min-h-[48px]
                     ${isActive(`/${lamaisonCategory.slug}`)}
                   `}
                   onClick={() => {
@@ -91,7 +92,22 @@ export default function CategorySidebar({ isOpen, onClose }: CategorySidebarProp
                     }
                   }}
                 >
-                  {lamaisonCategory.name}
+                  {lamaisonCategory.iconPath ? (
+                    <div className="w-8 h-full mr-3 flex-shrink-0 flex items-center">
+                      <Image
+                        src={lamaisonCategory.iconPath}
+                        alt={`${lamaisonCategory.name} icon`}
+                        width={32}
+                        height={32}
+                        className="object-contain w-full h-auto max-h-full"
+                      />
+                    </div>
+                  ) : (
+                    <div className="w-8 h-full mr-3 flex-shrink-0 bg-patisserie-mint rounded flex items-center justify-center text-sm font-bold text-gray-700">
+                      {lamaisonCategory.name.charAt(0)}
+                    </div>
+                  )}
+                  <span>{lamaisonCategory.name}</span>
                 </Link>
               )}
 
@@ -106,7 +122,7 @@ export default function CategorySidebar({ isOpen, onClose }: CategorySidebarProp
                   key={category.id}
                   href={`/${category.slug}`}
                   className={`
-                    block px-3 py-2 rounded-md text-sm font-medium transition-colors
+                    flex items-center px-3 rounded-md text-sm font-medium transition-colors min-h-[48px]
                     ${isActive(`/${category.slug}`)}
                   `}
                   onClick={() => {
@@ -116,7 +132,22 @@ export default function CategorySidebar({ isOpen, onClose }: CategorySidebarProp
                     }
                   }}
                 >
-                  {category.name}
+                  {category.iconPath ? (
+                    <div className="w-8 h-full mr-3 flex-shrink-0 flex items-center">
+                      <Image
+                        src={category.iconPath}
+                        alt={`${category.name} icon`}
+                        width={32}
+                        height={32}
+                        className="object-contain w-full h-auto max-h-full"
+                      />
+                    </div>
+                  ) : (
+                    <div className="w-8 h-full mr-3 flex-shrink-0 bg-patisserie-mint rounded flex items-center justify-center text-sm font-bold text-gray-700">
+                      {category.name.charAt(0)}
+                    </div>
+                  )}
+                  <span>{category.name}</span>
                 </Link>
               ))}
             </nav>

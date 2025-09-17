@@ -11,6 +11,7 @@ export async function GET() {
         name: true,
         slug: true,
         description: true,
+        iconPath: true,
         isPrincipal: true,
         displayOrder: true,
       },

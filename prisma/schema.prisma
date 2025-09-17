@@ -130,6 +130,7 @@ model ProductCategory {
   name        String   @unique // e.g., "Pâtisseries", "Gâteaux Entiers", "Café", "Brunch"
   slug        String   @unique // e.g., "patisseries", "gateaux-entiers", "cafe", "brunch"
   description String?
+  iconPath    String?  // e.g., "/images/categories/patisseries.png"
   isPrincipal Boolean  @default(false) // true for categories shown in main nav
   displayOrder Int     @default(0) // for ordering categories
   isActive    Boolean  @default(true)
