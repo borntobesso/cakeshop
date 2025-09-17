@@ -1,6 +1,6 @@
 "use client"
 
-import { createContext, useContext, useState, ReactNode } from "react"
+import { createContext, useContext, useState, useEffect, ReactNode } from "react"
 
 interface CartItem {
   id: number | string
@@ -15,17 +15,35 @@ interface CartItem {
 interface CartContextType {
   items: CartItem[]
   addToCart: (item: CartItem) => void
-  removeFromCart: (id: number | string) => void
-  updateQuantity: (id: number | string, quantity: number) => void
+  removeFromCart: (id: number | string, size?: string) => void
+  updateQuantity: (id: number | string, quantity: number, size?: string) => void
   clearCart: () => void
   getTotalPrice: () => number
   getTotalItems: () => number
+  isCartOpen: boolean
+  openCart: () => void
+  closeCart: () => void
+  toggleCart: () => void
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined)
 
 export function CartProvider({ children }: { children: ReactNode }) {
-  const [items, setItems] = useState<CartItem[]>([])
+  const [items, setItems] = useState<CartItem[]>(() => {
+    if (typeof window !== 'undefined') {
+      const savedCart = localStorage.getItem('cart')
+      return savedCart ? JSON.parse(savedCart) : []
+    }
+    return []
+  })
+  const [isCartOpen, setIsCartOpen] = useState(false)
+
+  // Save to localStorage whenever items change
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('cart', JSON.stringify(items))
+    }
+  }, [items])
 
   const addToCart = (item: CartItem) => {
     setItems(prevItems => {
@@ -41,14 +59,18 @@ export function CartProvider({ children }: { children: ReactNode }) {
     })
   }
 
-  const removeFromCart = (id: number | string) => {
-    setItems(prevItems => prevItems.filter(item => item.id !== id))
+  const removeFromCart = (id: number | string, size?: string) => {
+    setItems(prevItems => 
+      prevItems.filter(item => 
+        !(item.id === id && item.size === size)
+      )
+    )
   }
 
-  const updateQuantity = (id: number | string, quantity: number) => {
+  const updateQuantity = (id: number | string, quantity: number, size?: string) => {
     setItems(prevItems =>
       prevItems.map(item =>
-        item.id === id ? { ...item, quantity } : item
+        item.id === id && item.size === size ? { ...item, quantity } : item
       )
     )
   }
@@ -67,6 +89,10 @@ export function CartProvider({ children }: { children: ReactNode }) {
     return items.reduce((total, item) => total + item.quantity, 0);
   }
 
+  const openCart = () => setIsCartOpen(true)
+  const closeCart = () => setIsCartOpen(false)
+  const toggleCart = () => setIsCartOpen(!isCartOpen)
+
   return (
     <CartContext.Provider
       value={{
@@ -76,7 +102,11 @@ export function CartProvider({ children }: { children: ReactNode }) {
         updateQuantity,
         clearCart,
         getTotalPrice,
-        getTotalItems
+        getTotalItems,
+        isCartOpen,
+        openCart,
+        closeCart,
+        toggleCart
       }}
     >
       {children}

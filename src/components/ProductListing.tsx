@@ -26,7 +26,7 @@ export default function ProductListing({
   const [products, setProducts] = useState<DatabaseProduct[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const { addToCart } = useCart()
+  const { addToCart, openCart } = useCart()
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -72,6 +72,9 @@ export default function ProductListing({
     } else {
       addToCart(cartItem)
     }
+    
+    // Open cart sidebar after adding item
+    openCart()
   }
 
   if (loading) {

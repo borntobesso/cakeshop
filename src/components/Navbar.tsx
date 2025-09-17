@@ -7,11 +7,12 @@ import { useSession, signOut } from "next-auth/react";
 import { useState, useEffect } from "react";
 import { ProductCategory } from "@/types/category";
 import CategorySidebar from "./CategorySidebar";
+import CartSidebar from "./CartSidebar";
 
 export default function Navbar() {
   const pathname = usePathname();
   const { data: session, status } = useSession(); 
-  const { getTotalItems } = useCart();
+  const { getTotalItems, toggleCart } = useCart();
   const totalItems = getTotalItems();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -95,12 +96,17 @@ export default function Navbar() {
               </div>
 
               {/* Cart */}
-              <Link 
-                href="/panier" 
-                className="bg-patisserie-mint hover:bg-patisserie-yellow text-gray-800 px-4 py-2 rounded-full transition-colors"
+              <button 
+                onClick={toggleCart}
+                className="bg-patisserie-mint hover:bg-patisserie-yellow text-gray-800 px-4 py-2 rounded-full transition-colors relative"
               >
                 Panier ({totalItems})
-              </Link>
+                {totalItems > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-patisserie-coral text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                    {totalItems}
+                  </span>
+                )}
+              </button>
 
               {/* User Authentication */}
               <div className="flex items-center space-x-4">
@@ -139,12 +145,17 @@ export default function Navbar() {
 
             {/* Mobile Cart & Auth */}
             <div className="md:hidden flex items-center space-x-2">
-              <Link 
-                href="/panier" 
-                className="bg-patisserie-mint hover:bg-patisserie-yellow text-gray-800 px-3 py-1 rounded-full text-sm transition-colors"
+              <button 
+                onClick={toggleCart}
+                className="bg-patisserie-mint hover:bg-patisserie-yellow text-gray-800 px-3 py-1 rounded-full text-sm transition-colors relative"
               >
                 Panier ({totalItems})
-              </Link>
+                {totalItems > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-patisserie-coral text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
+                    {totalItems}
+                  </span>
+                )}
+              </button>
             </div>
           </div>
 
@@ -201,6 +212,9 @@ export default function Navbar() {
         isOpen={isSidebarOpen} 
         onClose={() => setIsSidebarOpen(false)} 
       />
+
+      {/* Cart Sidebar */}
+      <CartSidebar />
     </>
   );
 }

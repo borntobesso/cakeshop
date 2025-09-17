@@ -146,11 +146,30 @@ model Product {
   id              String          @id @default(cuid())
   name            String
   description     String
+  longDescription String?         // Detailed description for product page
   price           Float
   image           String
+  imageGallery    Json?           // Array of additional product images
   isAvailable     Boolean         @default(true)
   stock           Int             @default(0)
   displayOrder    Int             @default(0)
+  
+  // Product details
+  ingredients     String?         // List of ingredients
+  allergens       String?         // Allergen information
+  storage         String?         // Storage instructions
+  nutritionInfo   Json?           // Nutrition facts as JSON
+  
+  // Size and pricing options
+  sizeOptions     Json?           // Available sizes with prices {size: string, price: number}[]
+  
+  // Related products
+  relatedProductIds Json?         // Array of related product IDs
+  
+  // Click & collect info
+  preparationTime Int?            @default(0) // Hours needed to prepare
+  availableForPickup Boolean      @default(true)
+  
   categoryId      String
   createdAt       DateTime        @default(now())
   updatedAt       DateTime        @updatedAt
