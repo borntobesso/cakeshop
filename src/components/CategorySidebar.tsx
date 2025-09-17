@@ -82,7 +82,7 @@ export default function CategorySidebar({ isOpen, onClose }: CategorySidebarProp
                   key={lamaisonCategory.id}
                   href={`/${lamaisonCategory.slug}`}
                   className={`
-                    flex items-center px-3 rounded-md text-sm font-medium transition-colors min-h-[48px]
+                    flex items-center px-3 rounded-md text-sm font-medium transition-colors h-12
                     ${isActive(`/${lamaisonCategory.slug}`)}
                   `}
                   onClick={() => {
@@ -93,17 +93,17 @@ export default function CategorySidebar({ isOpen, onClose }: CategorySidebarProp
                   }}
                 >
                   {lamaisonCategory.iconPath ? (
-                    <div className="w-8 h-full mr-3 flex-shrink-0 flex items-center">
+                    <div className="w-10 h-10 mr-3 flex-shrink-0">
                       <Image
                         src={lamaisonCategory.iconPath}
                         alt={`${lamaisonCategory.name} icon`}
-                        width={32}
-                        height={32}
-                        className="object-contain w-full h-auto max-h-full"
+                        width={40}
+                        height={40}
+                        className="object-cover w-full h-full rounded"
                       />
                     </div>
                   ) : (
-                    <div className="w-8 h-full mr-3 flex-shrink-0 bg-patisserie-mint rounded flex items-center justify-center text-sm font-bold text-gray-700">
+                    <div className="w-10 h-10 mr-3 flex-shrink-0 bg-patisserie-mint rounded flex items-center justify-center text-sm font-bold text-gray-700">
                       {lamaisonCategory.name.charAt(0)}
                     </div>
                   )}
@@ -122,7 +122,7 @@ export default function CategorySidebar({ isOpen, onClose }: CategorySidebarProp
                   key={category.id}
                   href={`/${category.slug}`}
                   className={`
-                    flex items-center px-3 rounded-md text-sm font-medium transition-colors min-h-[48px]
+                    flex items-center px-3 rounded-md text-sm font-medium transition-colors h-12
                     ${isActive(`/${category.slug}`)}
                   `}
                   onClick={() => {
@@ -133,17 +133,17 @@ export default function CategorySidebar({ isOpen, onClose }: CategorySidebarProp
                   }}
                 >
                   {category.iconPath ? (
-                    <div className="w-8 h-full mr-3 flex-shrink-0 flex items-center">
+                    <div className="w-10 h-10 mr-3 flex-shrink-0">
                       <Image
                         src={category.iconPath}
                         alt={`${category.name} icon`}
-                        width={32}
-                        height={32}
-                        className="object-contain w-full h-auto max-h-full"
+                        width={40}
+                        height={40}
+                        className="object-cover w-full h-full rounded"
                       />
                     </div>
                   ) : (
-                    <div className="w-8 h-full mr-3 flex-shrink-0 bg-patisserie-mint rounded flex items-center justify-center text-sm font-bold text-gray-700">
+                    <div className="w-10 h-10 mr-3 flex-shrink-0 bg-patisserie-mint rounded flex items-center justify-center text-sm font-bold text-gray-700">
                       {category.name.charAt(0)}
                     </div>
                   )}
