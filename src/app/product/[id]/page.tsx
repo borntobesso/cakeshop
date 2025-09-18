@@ -314,7 +314,7 @@ export default function ProductDetailPage() {
 
       {/* Related Products Section */}
       <div className="mt-16">
-        <h2 className="text-2xl font-serif mb-8">Produits similaires</h2>
+        <h2 className="text-2xl font-serif mb-8">Vous aimerez aussi</h2>
         
         {loadingRelated ? (
           <div className="text-gray-500 text-center py-8">

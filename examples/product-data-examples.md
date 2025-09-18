@@ -9,7 +9,7 @@ This file provides examples of how to populate the enhanced Product fields in th
   "id": "product_123",
   "name": "Tarte aux Fraises",
   "description": "Délicieuse tarte aux fraises fraîches sur pâte sablée",
-  "longDescription": "Une tarte artisanale composée d'une pâte sablée croustillante, garnie d'une crème pâtissière vanillée et surmontée de fraises fraîches de saison. Chaque tarte est réalisée le matin même avec des ingrédients de première qualité.",
+  "longDescription": "Mousse vanille de Madagascar, crémeux mangue passion, biscuit joconde, croustillant praliné feuilletine",
   "price": 28.50,
   "image": "/images/products/tarte-fraises.jpg"
 }
@@ -32,7 +32,7 @@ This file provides examples of how to populate the enhanced Product fields in th
 ### Ingredients
 ```json
 {
-  "ingredients": "Farine de blé, beurre, sucre, œufs, crème fraîche, vanille Bourbon, fraises fraîches, sucre glace, gélatine"
+  "ingredients": "Crème, œufs, sucre, chocolat blanc, gélatine végétale, purée de mangue, purée de fruit de la passion, vanille de Madagascar, beurre, farine de blé, poudre d'amandes, praliné noisettes (noisettes, sucre), feuilletine (farine de blé, sucre, matière grasse végétale, lactosérum en poudre, sel), stabilisant (agar-agar), émulsifiant (lécithine de soja), arôme naturel de vanille, colorant naturel."
 }
 ```
 
@@ -46,7 +46,7 @@ This file provides examples of how to populate the enhanced Product fields in th
 ### Allergens
 ```json
 {
-  "allergens": "Contient: gluten (blé), œufs, lait. Peut contenir des traces de: fruits à coque, soja"
+  "allergens": "Gluten, œufs, lait, fruits à coque (amandes, noisettes), soja"
 }
 ```
 
@@ -73,16 +73,40 @@ This file provides examples of how to populate the enhanced Product fields in th
 {
   "sizeOptions": [
     {
-      "size": "4-6 personnes",
-      "price": 28.50
+      "size": "4 parts",
+      "price": 22
     },
     {
-      "size": "6-8 personnes", 
-      "price": 42.00
+      "size": "6 parts", 
+      "price": 30
     },
     {
-      "size": "8-10 personnes",
-      "price": 58.00
+      "size": "8 parts",
+      "price": 38
+    },
+    {
+      "size": "10 parts",
+      "price": 45
+    },
+    {
+      "size": "12 parts",
+      "price": 54
+    },
+    {
+      "size": "14 parts",
+      "price": 63
+    },
+    {
+      "size": "16 parts",
+      "price": 72
+    },
+    {
+      "size": "18 parts",
+      "price": 81
+    },
+    {
+      "size": "20 parts",
+      "price": 90
     }
   ]
 }

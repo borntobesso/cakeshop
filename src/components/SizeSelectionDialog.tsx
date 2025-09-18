@@ -1,29 +1,56 @@
 import { Dialog, DialogPanel, DialogTitle, Transition, TransitionChild } from '@headlessui/react'
 import { Fragment, useState } from 'react'
 
+interface SizeOption {
+  size: string
+  price: number
+}
+
 interface SizeSelectionDialogProps {
   isOpen: boolean
   onClose: () => void
   onConfirm: (size: string, price: number) => void
   productName: string
+  sizeOptions?: SizeOption[]
+  showLargeSizesOnly?: boolean
 }
 
-const sizeOptions = [
-  { size: '4p', price: 22 },
-  { size: '6p', price: 30 },
-  { size: '8p', price: 38 },
-  { size: '10p', price: 45 }
-]
-
-export default function SizeSelectionDialog({ isOpen, onClose, onConfirm, productName }: SizeSelectionDialogProps) {
+export default function SizeSelectionDialog({ 
+  isOpen, 
+  onClose, 
+  onConfirm, 
+  productName, 
+  sizeOptions = [],
+  showLargeSizesOnly = false
+}: SizeSelectionDialogProps) {
   const [selectedSize, setSelectedSize] = useState('')
 
+  // Default fallback sizes if none provided
+  const defaultSizeOptions = [
+    { size: '4 parts', price: 22 },
+    { size: '6 parts', price: 30 },
+    { size: '8 parts', price: 38 },
+    { size: '10 parts', price: 45 }
+  ]
+
+  // Use provided options or fallback to defaults
+  const availableOptions = sizeOptions.length > 0 ? sizeOptions : defaultSizeOptions
+
+  // Filter for large sizes if needed
+  const filteredOptions = showLargeSizesOnly 
+    ? availableOptions.filter(option => {
+        const parts = parseInt(option.size.split(' ')[0])
+        return parts >= 10
+      })
+    : availableOptions
+
   const handleConfirm = () => {
-    const selectedOption = sizeOptions.find(option => option.size === selectedSize)
+    const selectedOption = filteredOptions.find(option => option.size === selectedSize)
     if (selectedOption) {
       onConfirm(selectedSize, selectedOption.price)
     }
     onClose()
+    setSelectedSize('')
   }
 
   return (
@@ -61,7 +88,7 @@ export default function SizeSelectionDialog({ isOpen, onClose, onConfirm, produc
                 </DialogTitle>
                 <div className="mt-4">
                   <div className="grid grid-cols-2 gap-4">
-                    {sizeOptions.map((option) => (
+                    {filteredOptions.map((option) => (
                       <button
                         key={option.size}
                         onClick={() => setSelectedSize(option.size)}
