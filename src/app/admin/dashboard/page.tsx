@@ -37,9 +37,22 @@ export default function AdminDashboard() {
 					</h2>
 					<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 						<div className="bg-white rounded-lg shadow p-6">
-							<h3 className="text-lg font-semibold mb-4">Codes Spéciaux</h3>
+							<h3 className="text-lg font-semibold mb-4">Pré-Autorisations</h3>
 							<p className="text-gray-600 mb-4">
-								Gérer les codes permettant le paiement sur place pour les nouveaux clients
+								Gérer les pré-autorisations bancaires des nouveaux clients
+							</p>
+							<a
+								href="/admin/preauth"
+								className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors"
+							>
+								Gérer les pré-autorisations
+							</a>
+						</div>
+
+						<div className="bg-white rounded-lg shadow p-6">
+							<h3 className="text-lg font-semibold mb-4">Codes Cadeau</h3>
+							<p className="text-gray-600 mb-4">
+								Générer et gérer les codes pour les cartes cadeaux
 							</p>
 							<a
 								href="/admin/special-codes"

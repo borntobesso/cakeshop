@@ -136,6 +136,9 @@ export default function ProductListing({
     const size = customSize || getCurrentSize(product)
     const price = customPrice || getCurrentPrice(product)
 
+    console.log('ProductListing - Adding to cart, product:', product)
+    console.log('ProductListing - preparationTime:', product.preparationTime)
+
     // Convert database product to cart format
     const cartItem = {
       id: product.id,
@@ -144,9 +147,11 @@ export default function ProductListing({
       price: price,
       image: product.image,
       size: size,
-      quantity: 1
+      quantity: 1,
+      preparationTime: product.preparationTime
     }
 
+    console.log('ProductListing - Cart item:', cartItem)
     addToCart(cartItem)
     openCart()
   }

@@ -13,6 +13,8 @@ interface CheckoutRequest {
   }>;
   customerInfo: {
     customerName: string;
+    firstName: string;
+    lastName: string;
     email: string;
     phone: string;
     pickupDate: string;
@@ -66,6 +68,8 @@ export async function POST(request: Request) {
     const metadata = {
       userId: session.user.id,
       customerName: customerInfo.customerName,
+      firstName: customerInfo.firstName,
+      lastName: customerInfo.lastName,
       customerEmail: customerInfo.email,
       customerPhone: customerInfo.phone,
       pickupDate: customerInfo.pickupDate,

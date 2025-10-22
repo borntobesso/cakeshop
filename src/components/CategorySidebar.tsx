@@ -58,7 +58,7 @@ export default function CategorySidebar({ isOpen, onClose }: CategorySidebarProp
       `}>
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-gray-200">
-          <h2 className="text-lg font-serif text-gray-900">Navigation</h2>
+          <h2 className="text-lg font-serif text-gray-900">Fu Pâtisserie</h2>
           <button
             onClick={onClose}
             className="p-2 rounded-md text-gray-400 hover:text-gray-600 focus:outline-none"

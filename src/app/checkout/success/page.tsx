@@ -1,14 +1,18 @@
 "use client";
 
 import { useEffect, useState, Suspense} from "react";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
+import { useCart } from "@/context/CartContext";
 
 function SuccessContent() {
 	const searchParams = useSearchParams();
+	const router = useRouter();
+	const { clearCart } = useCart();
 	const [isLoading, setIsLoading] = useState(true);
 	const [orderDetails, setOrderDetails] = useState<any>(null);
 	const [error, setError] = useState("");
+	const [countdown, setCountdown] = useState(15);
 	
 	useEffect(() => {
 		const sessionId = searchParams.get("session_id");
@@ -32,6 +36,21 @@ function SuccessContent() {
 			if (response.ok) {
 				const data = await response.json();
 				setOrderDetails(data.order);
+
+				// Clear cart after successful payment processing
+				clearCart();
+
+				// Start countdown and redirect to home
+				const countdownInterval = setInterval(() => {
+					setCountdown(prev => {
+						if (prev <= 1) {
+							clearInterval(countdownInterval);
+							setTimeout(() => router.push("/"), 0);
+							return 0;
+						}
+						return prev - 1;
+					});
+				}, 1000);
 			} else {
 				setError("Erreur lors du traitement de la commande");
 			}
@@ -74,8 +93,11 @@ function SuccessContent() {
 				<div className="text-center">
 					<div className="text-green-600 text-6xl mb-4">✅</div>
 					<h1 className="text-3xl font-bold text-gray-900 mb-4">Paiement réussi !</h1>
-					<p className="text-lg text-gray-600 mb-8">
+					<p className="text-lg text-gray-600 mb-4">
 						Votre commande a été confirmée et sera prête pour le retrait.
+					</p>
+					<p className="text-sm text-gray-500 mb-8">
+						Retour à l'accueil dans {countdown} secondes...
 					</p>
 				</div>
 				
@@ -105,11 +127,17 @@ function SuccessContent() {
 					<h3 className="font-semibold text-blue-800 mb-2">📧 Confirmation envoyée</h3>
 					<p className="text-sm text-blue-700">
 						Un email de confirmation a été envoyé avec tous les détails de votre commande.
-						Vous receverez également un SMS de rappel 24h avant le retrait.
+						Vous receverez également un email de rappel 24h avant le retrait.
 					</p>
 				</div>
 				
 				<div className="flex gap-4 justify-center">
+					<Link
+						href="/"
+						className="bg-blue-700 text-white px-6 py-3 rounded-lg hover:bg-blue-800 transition-colors"
+					>
+						Retour à l'accueil
+					</Link>
 					<Link
 						href="/patisseries"
 						className="bg-gray-200 text-gray-800 px-6 py-3 rounded-lg hover:bg-gray-300 transition-colors"

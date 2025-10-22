@@ -11,8 +11,8 @@ import CartSidebar from "./CartSidebar";
 
 export default function Navbar() {
   const pathname = usePathname();
-  const { data: session, status } = useSession(); 
-  const { getTotalItems, toggleCart } = useCart();
+  const { data: session, status } = useSession();
+  const { getTotalItems, toggleCart, isHydrated } = useCart();
   const totalItems = getTotalItems();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -96,11 +96,11 @@ export default function Navbar() {
               </div>
 
               {/* Cart */}
-              <button 
+              <button
                 onClick={toggleCart}
                 className="bg-patisserie-mint hover:bg-patisserie-yellow text-gray-800 px-4 py-2 rounded-full transition-colors"
               >
-                Panier ({totalItems})
+                Panier ({isHydrated ? totalItems : 0})
               </button>
 
               {/* User Authentication */}
@@ -140,11 +140,11 @@ export default function Navbar() {
 
             {/* Mobile Cart & Auth */}
             <div className="md:hidden flex items-center space-x-2">
-              <button 
+              <button
                 onClick={toggleCart}
                 className="bg-patisserie-mint hover:bg-patisserie-yellow text-gray-800 px-3 py-1 rounded-full text-sm transition-colors"
               >
-                Panier ({totalItems})
+                Panier ({isHydrated ? totalItems : 0})
               </button>
             </div>
           </div>

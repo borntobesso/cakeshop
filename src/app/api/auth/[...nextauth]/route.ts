@@ -3,6 +3,7 @@ import { PrismaAdapter } from "@auth/prisma-adapter";
 import { prisma } from "@/lib/prisma";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
+import { normalizePhoneNumber } from "@/lib/phone-utils";
 
 const handler = NextAuth({
   adapter: PrismaAdapter(prisma),
@@ -10,19 +11,34 @@ const handler = NextAuth({
     CredentialsProvider({
       name: "Credentials",
       credentials: {
-        email: { label: "Email", type: "email" },
+        identifier: { label: "Email or Phone", type: "text" },
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password) {
+        if (!credentials?.identifier || !credentials?.password) {
           return null;
         }
 
-        const user = await prisma.user.findUnique({
-          where: {
-            email: credentials.email,
-          },
-        });
+        // Try to find user by email first, then by phone
+        let user = null;
+
+        // Check if identifier looks like an email
+        if (credentials.identifier.includes("@")) {
+          user = await prisma.user.findUnique({
+            where: {
+              email: credentials.identifier,
+            },
+          });
+        } else {
+          // Assume it's a phone number - normalize it first
+          const normalizedPhone = normalizePhoneNumber(credentials.identifier);
+          user = await prisma.user.findUnique({
+            where: {
+              phone: normalizedPhone,
+            },
+          });
+        }
+
         if (!user || !user.password) {
           return null;
         }
@@ -39,6 +55,9 @@ const handler = NextAuth({
           id: user.id,
           email: user.email,
           name: user.name,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          phone: user.phone,
           role: user.role,
         };
       },
@@ -51,13 +70,19 @@ const handler = NextAuth({
     async jwt({ token, user }) {
       if (user) {
         token.role = user.role;
+        token.firstName = user.firstName;
+        token.lastName = user.lastName;
+        token.phone = user.phone;
       }
       return token;
     },
     async session({ session, token }) {
       if (token && session.user) {
-        session.user.id = token.sub!;
-        session.user.role = token.role;
+        (session.user as any).id = token.sub!;
+        (session.user as any).role = token.role;
+        (session.user as any).firstName = token.firstName;
+        (session.user as any).lastName = token.lastName;
+        (session.user as any).phone = token.phone;
       }
       return session;
     },

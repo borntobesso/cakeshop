@@ -4,7 +4,11 @@ export async function isFirstTimeCustomer(userId: string): Promise<boolean> {
   const orderCount = await prisma.order.count({
     where: {
       userId,
-      paymentStatus: "paid",
+      // Count any order that was successfully created (not just paid ones)
+      OR: [
+        { paymentStatus: "paid" },
+        { paymentStatus: "pending" }, // Include pending orders for onsite payments
+      ],
     },
   });
 

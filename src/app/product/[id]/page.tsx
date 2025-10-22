@@ -30,8 +30,10 @@ export default function ProductDetailPage() {
           throw new Error('Product not found')
         }
         const data = await response.json()
+        console.log('Fetched product data:', data.product)
+        console.log('preparationTime in product:', data.product.preparationTime)
         setProduct(data.product)
-        
+
         // Set default size and price
         if (data.product.sizeOptions && data.product.sizeOptions.length > 0) {
           setSelectedSize(data.product.sizeOptions[0].size)
@@ -79,6 +81,9 @@ export default function ProductDetailPage() {
   const handleAddToCart = () => {
     if (!product) return
 
+    console.log('Product before creating cart item:', product)
+    console.log('product.preparationTime:', product.preparationTime)
+
     const cartItem = {
       id: product.id,
       name: product.name,
@@ -86,9 +91,11 @@ export default function ProductDetailPage() {
       price: selectedPrice,
       image: product.image,
       size: selectedSize,
-      quantity: quantity
+      quantity: quantity,
+      preparationTime: product.preparationTime
     }
 
+    console.log('Cart item being added:', cartItem)
     addToCart(cartItem)
     setShowCartSuccess(true)
     openCart()

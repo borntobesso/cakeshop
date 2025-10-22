@@ -46,12 +46,14 @@ model Session {
 
 model User {
   id            String    @id @default(cuid())
-  name          String?
-  email         String    @unique
+  firstName     String?
+  lastName      String?
+  name          String?   // Keep for backward compatibility with NextAuth
+  email         String?   @unique
   emailVerified DateTime?
   image         String?
   password      String?
-  phone         String?
+  phone         String?   @unique
   role          String    @default("customer") // customer | admin
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
@@ -77,6 +79,8 @@ model Order {
   orderNumber   String   @unique // Human-readable order number (e.g., "290824-001")
   userId        String
   customerName  String
+  firstName     String?
+  lastName      String?
   customerEmail String
   customerPhone String?
   items         Json
@@ -87,6 +91,14 @@ model Order {
   pickupDate    DateTime
   pickupTime    String
   status        String   @default("pending") // "pending" | "confirmed" | "ready"
+
+  // Bank pre-authorization fields for first-time customers
+  requiresPreAuth     Boolean @default(false) // Whether this order requires pre-authorization
+  preAuthStatus       String? // "pending" | "authorized" | "failed" | "expired"
+  stripePaymentIntent String? // Stripe PaymentIntent ID for pre-authorization
+  preAuthAmount       Float?  // Amount pre-authorized (usually full order amount)
+  preAuthExpiresAt    DateTime? // When the pre-authorization expires
+
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 

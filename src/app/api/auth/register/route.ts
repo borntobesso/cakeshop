@@ -1,29 +1,57 @@
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
+import { normalizePhoneNumber } from "@/lib/phone-utils";
 
 export async function POST(request: NextRequest) {
   try {
-    const { name, email, phone, password } = await request.json();
+    const { firstName, lastName, email, phone, password } = await request.json();
 
     // Basic validation
-    if (!name || !email || !password) {
+    if (!firstName || !lastName || !password) {
       return NextResponse.json(
-        { error: "Nom, email et mot de passe sont requis" },
+        { error: "Prénom, nom et mot de passe sont requis" },
         { status: 400 }
       );
     }
 
-    // Email duplication validation
-    const existingUser = await prisma.user.findUnique({
-      where: { email },
-    });
-
-    if (existingUser) {
+    // Email OR phone validation
+    if (!email && !phone) {
       return NextResponse.json(
-        { error: "Un compte avec cet email existe déjà" },
+        { error: "Veuillez fournir au moins un email ou un numéro de téléphone" },
         { status: 400 }
       );
+    }
+
+    // Email duplication validation (only if email is provided)
+    if (email) {
+      const existingUser = await prisma.user.findUnique({
+        where: { email },
+      });
+
+      if (existingUser) {
+        return NextResponse.json(
+          { error: "Un compte avec cet email existe déjà" },
+          { status: 400 }
+        );
+      }
+    }
+
+    // Normalize phone number if provided
+    const normalizedPhone = phone ? normalizePhoneNumber(phone) : null;
+
+    // Phone duplication validation (only if phone is provided)
+    if (normalizedPhone) {
+      const existingUserByPhone = await prisma.user.findFirst({
+        where: { phone: normalizedPhone },
+      });
+
+      if (existingUserByPhone) {
+        return NextResponse.json(
+          { error: "Un compte avec ce numéro de téléphone existe déjà" },
+          { status: 400 }
+        );
+      }
     }
 
     // Password hashing
@@ -32,9 +60,11 @@ export async function POST(request: NextRequest) {
     // User creation
     const user = await prisma.user.create({
       data: {
-        name,
-        email,
-        phone: phone || null,
+        firstName,
+        lastName,
+        name: `${firstName} ${lastName}`, // Keep for backward compatibility with NextAuth
+        email: email || null,
+        phone: normalizedPhone,
         password: hashedPassword,
         role: "customer",
       },
@@ -43,6 +73,8 @@ export async function POST(request: NextRequest) {
     // Omit password from response
     const userWithoutPassword = {
       id: user.id,
+      firstName: user.firstName,
+      lastName: user.lastName,
       name: user.name,
       email: user.email,
       phone: user.phone,

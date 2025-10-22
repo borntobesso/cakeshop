@@ -10,6 +10,7 @@ interface CartItem {
   image: string
   size?: string
   quantity: number
+  preparationTime?: number // Preparation time in hours
 }
 
 interface CartContextType {
@@ -24,26 +25,33 @@ interface CartContextType {
   openCart: () => void
   closeCart: () => void
   toggleCart: () => void
+  isHydrated: boolean
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined)
 
 export function CartProvider({ children }: { children: ReactNode }) {
-  const [items, setItems] = useState<CartItem[]>(() => {
-    if (typeof window !== 'undefined') {
-      const savedCart = localStorage.getItem('cart')
-      return savedCart ? JSON.parse(savedCart) : []
-    }
-    return []
-  })
+  const [items, setItems] = useState<CartItem[]>([])
   const [isCartOpen, setIsCartOpen] = useState(false)
+  const [isHydrated, setIsHydrated] = useState(false)
 
-  // Save to localStorage whenever items change
+  // Load cart from localStorage after hydration
   useEffect(() => {
     if (typeof window !== 'undefined') {
+      const savedCart = localStorage.getItem('cart')
+      if (savedCart) {
+        setItems(JSON.parse(savedCart))
+      }
+      setIsHydrated(true)
+    }
+  }, [])
+
+  // Save to localStorage whenever items change (only after hydration)
+  useEffect(() => {
+    if (isHydrated && typeof window !== 'undefined') {
       localStorage.setItem('cart', JSON.stringify(items))
     }
-  }, [items])
+  }, [items, isHydrated])
 
   const addToCart = (item: CartItem) => {
     setItems(prevItems => {
@@ -106,7 +114,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
         isCartOpen,
         openCart,
         closeCart,
-        toggleCart
+        toggleCart,
+        isHydrated
       }}
     >
       {children}

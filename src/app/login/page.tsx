@@ -7,7 +7,7 @@ import Link from "next/link";
 
 function LoginForm() {
 	const [formData, setFormData] = useState({
-		email: "",
+		identifier: "", // Can be email or phone
 		password: ""
 	});
 	const [isLoading, setIsLoading] = useState(false);
@@ -31,13 +31,13 @@ function LoginForm() {
 		
 		try {
 			const result = await signIn("credentials", {
-				email: formData.email,
+				identifier: formData.identifier,
 				password: formData.password,
 				redirect: false
 			});
 			
 			if (result?.error) {
-				setError("Email ou mot de passe incorrect")
+				setError("Email/téléphone ou mot de passe incorrect")
 			} else {
 				// Success login : session verification and redirect
 				const session = await getSession();
@@ -84,17 +84,17 @@ function LoginForm() {
 					
 					<div className="space-y-4">
 						<div>
-							<label htmlFor="email" className="block text-sm font-medium text-gray-700">
-								Adresse email
+							<label htmlFor="identifier" className="block text-sm font-medium text-gray-700">
+								Email ou téléphone
 							</label>
 							<input
-								id="email"
-								name="email"
-								type="email"
+								id="identifier"
+								name="identifier"
+								type="text"
 								required
 								className="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-patisserie-coral focus:border-patisserie-coral focus:z-10 sm:text-sm"
-								placeholder="votre@email.com"
-								value={formData.email}
+								placeholder="votre@email.com ou 06 12 34 56 78"
+								value={formData.identifier}
 								onChange={handleChange}
 							/>
 						</div>
@@ -120,7 +120,7 @@ function LoginForm() {
 						<button
 							type="submit"
 							disabled={isLoading}
-							className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-patisserie-coral hover:bg-patisserie-yellow focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-patisserie-coral disabled:opacity-50 diablaed:cursor-not-allowed"
+							className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-gray-900 hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 disabled:opacity-50 disabled:cursor-not-allowed"
 						>
 							{isLoading ? "Connexion en cours..." : "Se connecter"}
 						</button>

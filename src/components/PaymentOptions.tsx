@@ -7,7 +7,7 @@ interface PaymentOptionsProps {
 	totalAmount: number;
 	onPaymentMethodChange: (method: "online" | "onsite") => void;
 	selectedMethod?: "online" | "onsite";
-	onPaymentDataChange: (data: { specialCode: string; isCodeValid: boolean }) => void;
+	onPaymentDataChange: (data: { specialCode: string; isCodeValid: boolean; isFirstTimeUser: boolean }) => void;
 	showCustomAlert: (title: string, message: string, type: "success" | "error" | "info", closeMainForm?: boolean) => void;
 }
 
@@ -28,9 +28,10 @@ export default function PaymentOptions({
 	useEffect(() => {
 		onPaymentDataChange({
 			specialCode,
-			isCodeValid
+			isCodeValid,
+			isFirstTimeUser
 		});
-	}, [specialCode, isCodeValid, onPaymentDataChange])
+	}, [specialCode, isCodeValid, isFirstTimeUser, onPaymentDataChange])
 	
 	// Verify first-time user
 	useEffect(() => {
@@ -92,7 +93,7 @@ export default function PaymentOptions({
 		onPaymentMethodChange(method);
 	}
 	
-	const canPayOnsite = !isFirstTimeUser || isCodeValid;
+	const canPayOnsite = true; // All users can select onsite payment - first-time users will go through pre-authorization
 	
 	return (
 		<div className="bg-white p-6 rounded-lg shadow-sm border">
@@ -162,28 +163,37 @@ export default function PaymentOptions({
 			{isFirstTimeUser && !isCodeValid && (
 				<div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
 					<div className="flex-items-start">
-						<div className="text-blue-600 mr-2">ℹ️</div>
+						<div className="text-blue-600 mr-2">🔒</div>
 						<div>
-							<div className="font-medium text-blue-800">Première commande</div>
+							<div className="font-medium text-blue-800">Première commande - Garantie requise</div>
 							<div className="text-sm text-blue-700 mt-1">
-								Pour votre première commande, le paiement en ligne est requis pour éviter les no-shows.
-								Si vous préférez payer sur place, contactez-nous pour obtenir un code spécial.
+								Si vous choisissez "Paiement sur place", vous devrez d'abord pré-autoriser une carte de crédit.
+								Cette étape garantit votre commande sans vous débiter - vous pourrez payer en espèces lors du retrait.
 							</div>
-							
-							{/* Display successful special code input */}
+
+							<div className="mt-3 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+								<div className="text-sm text-yellow-800">
+									💳 <strong>Comment ça marche ?</strong><br/>
+									• Étape 1 : Pré-autorisation de votre carte (pas de débit)<br/>
+									• Étape 2 : Retrait - payez en espèces → la pré-autorisation est annulée<br/>
+									• Étape 2 bis : Retrait - payez avec cette carte → le paiement est finalisé
+								</div>
+							</div>
+
+							{/* Display special code option for gift cards */}
 							{isCodeValid && (
 								<div className="mt-3 p-3 bg-green-50 border border-green-200 rounded-lg">
 									<div className="flex items-center text-green-800">
-										<span className="mr-2">✅</span>
-										<span className="font-medium">Code valide: {specialCode}</span>
+										<span className="mr-2">🎁</span>
+										<span className="font-medium">Carte cadeau appliquée: {specialCode}</span>
 									</div>
 									<div className="text-sm text-green-700 mt-1">
-										Vous pouvez maintenant choisir le paiement sur place !
+										Votre carte cadeau est valide !
 									</div>
 								</div>
 							)}
-							
-							{/* Special code input */}
+
+							{/* Gift card input */}
 							<div className="mt-3">
 								<button
 									onClick={() => setShowCodeInput(!showCodeInput)}
@@ -191,9 +201,9 @@ export default function PaymentOptions({
 									disabled={isCodeValid}
 									type="button"
 								>
-									{isCodeValid ? "Code validé" : "J'ai un code spécial"}
+									{isCodeValid ? "Carte cadeau appliquée" : "J'ai une carte cadeau"}
 								</button>
-								
+
 								{showCodeInput && !isCodeValid && (
 									<div className="mt-2 space-y-2">
 										<div className="flex gap-2">
@@ -201,7 +211,7 @@ export default function PaymentOptions({
 												type="text"
 												value={specialCode}
 												onChange={(e) => handleCodeChange(e.target.value)}
-												placeholder="Entrez votre code (6 caractères)"
+												placeholder="Code de carte cadeau"
 												className="px-3 py-2 border rounded text-sm flex-1 uppercase"
 												maxLength={6}
 												disabled={isValidating}
@@ -209,7 +219,7 @@ export default function PaymentOptions({
 											<button
 												type="button"
 												onClick={handleSpecialCodeSubmit}
-												disabled={isValidating || specialCode.length!== 6}
+												disabled={isValidating || specialCode.length !== 6}
 												className="px-4 py-2 bg-blue-600 text-white rounded text-sm hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
 											>
 												{isValidating ? (
@@ -218,12 +228,12 @@ export default function PaymentOptions({
 														<span>...</span>
 													</div>
 												) : (
-													"Valider"
+													"Appliquer"
 												)}
 											</button>
 										</div>
 										<div className="text-xs text-gray-500">
-											Le code doit contenir exactement 6 caractères
+											Code de 6 caractères
 										</div>
 									</div>
 								)}

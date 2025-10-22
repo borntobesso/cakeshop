@@ -2,17 +2,19 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth-config";
 import { prisma } from "@/lib/prisma";
-import { useSpecialCode } from "@/lib/payment-utils";
+import { useSpecialCode, isFirstTimeCustomer } from "@/lib/payment-utils";
 import { sendAllOrderNotifications, sendCustomerNotificationsOnly, sendMailNotificationsOnly } from "@/lib/order-notifications";
 import { generateOrderNumber } from "@/lib/order-utils";
 
 interface CreateOrderRequest {
   customerName: string;
+  firstName?: string;
+  lastName?: string;
   email: string;
   phone: string;
   pickupDate: string;
   pickupTime: string;
-  paymentMethod: "onsite";
+  paymentMethod: "onsite" | "online";
   specialCode?: string;
   items: Array<{
     id: string;
@@ -37,6 +39,8 @@ export async function POST(request: Request) {
     const body: CreateOrderRequest = await request.json();
     const {
       customerName,
+      firstName,
+      lastName,
       email,
       phone,
       pickupDate,
@@ -46,9 +50,10 @@ export async function POST(request: Request) {
       items,
     } = body;
 
-    if (paymentMethod !== "onsite") {
+    // For online payments, use the checkout API instead
+    if (paymentMethod === "online") {
       return NextResponse.json(
-        { error: "Cette API est uniquement pour les paiements sur place" },
+        { error: "Pour les paiements en ligne, utilisez l'API checkout" },
         { status: 400 }
       );
     }
@@ -69,6 +74,10 @@ export async function POST(request: Request) {
       0
     );
 
+    // Check if user is first-time customer for pre-authorization requirement
+    const isFirstTime = await isFirstTimeCustomer(session.user.id);
+    const requiresPreAuth = isFirstTime && !specialCodeUsed;
+
     // Generate human-readable order number
     const orderNumber = await generateOrderNumber();
 
@@ -77,6 +86,8 @@ export async function POST(request: Request) {
         orderNumber,
         userId: session.user.id,
         customerName,
+        firstName,
+        lastName,
         customerEmail: email,
         customerPhone: phone,
         items,
@@ -87,12 +98,19 @@ export async function POST(request: Request) {
         pickupDate: new Date(pickupDate),
         pickupTime,
         status: "confirmed",
+        // Pre-authorization fields
+        requiresPreAuth,
+        preAuthStatus: requiresPreAuth ? "pending" : null,
+        preAuthAmount: requiresPreAuth ? totalAmount : null,
+        preAuthExpiresAt: requiresPreAuth ? new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) : null, // 7 days from now
       },
     });
 
     try {
       // await sendAllOrderNotifications(order);
-      await sendMailNotificationsOnly(order);
+      // await sendMailNotificationsOnly(order);
+      console.log("Supposing sending emails after process on-site...");
+      console.log("Order details:", order);
     } catch (notificationError) {
       console.error("Notification error:", notificationError);
     }

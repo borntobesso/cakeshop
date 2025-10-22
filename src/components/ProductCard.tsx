@@ -23,15 +23,18 @@ export default function ProductCard({
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault()
     e.stopPropagation()
-    
+
     if (!product.isAvailable) return
 
-    const defaultSize = product.sizeOptions && product.sizeOptions.length > 0 
-      ? product.sizeOptions[0].size 
+    const defaultSize = product.sizeOptions && product.sizeOptions.length > 0
+      ? product.sizeOptions[0].size
       : 'individuel'
-    const defaultPrice = product.sizeOptions && product.sizeOptions.length > 0 
-      ? product.sizeOptions[0].price 
+    const defaultPrice = product.sizeOptions && product.sizeOptions.length > 0
+      ? product.sizeOptions[0].price
       : product.price
+
+    console.log('ProductCard - Adding to cart, product:', product)
+    console.log('ProductCard - preparationTime:', product.preparationTime)
 
     const cartItem = {
       id: product.id,
@@ -40,9 +43,11 @@ export default function ProductCard({
       price: defaultPrice,
       image: product.image,
       size: defaultSize,
-      quantity: 1
+      quantity: 1,
+      preparationTime: product.preparationTime
     }
 
+    console.log('ProductCard - Cart item:', cartItem)
     addToCart(cartItem)
     setShowCartSuccess(true)
     openCart()
