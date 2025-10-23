@@ -61,7 +61,8 @@ export async function POST(request: NextRequest) {
           select: {
             name: true
           }
-        }
+        },
+        preparationTime: true
       },
       take: 6 // Limit to 6 suggestions
     });

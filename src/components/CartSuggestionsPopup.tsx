@@ -21,6 +21,7 @@ interface SuggestionProduct {
   category: {
     name: string
   }
+  preparationTime?: number
 }
 
 export default function CartSuggestionsPopup({
