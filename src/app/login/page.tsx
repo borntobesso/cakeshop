@@ -16,6 +16,7 @@ function LoginForm() {
 	const router = useRouter();
 	const searchParams = useSearchParams();
 	const message = searchParams.get("message");
+	const callbackUrl = searchParams.get("callbackUrl");
 	
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		setFormData(prev => ({
@@ -44,7 +45,8 @@ function LoginForm() {
 				if (session?.user?.role === "admin") {
 					router.push("/admin")
 				} else {
-					router.push("/")
+					// Redirect to callback URL if provided, otherwise go to home
+					router.push(callbackUrl || "/")
 				}
 			}
 		} catch {
@@ -63,7 +65,10 @@ function LoginForm() {
 					</h2>
 					<p className="mt-2 text-center text-sm text-gray-600">
 						Ou{" "}
-						<Link href="/register" className="font-medium text-patisserie-coral hover:text-patisserie-yellow">
+						<Link
+							href={callbackUrl ? `/register?callbackUrl=${encodeURIComponent(callbackUrl)}` : "/register"}
+							className="font-medium text-patisserie-coral hover:text-patisserie-yellow"
+						>
 							créez votre compte
 						</Link>
 					</p>

@@ -1,10 +1,10 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { Suspense, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 
-export default function RegisterPage() {
+function RegisterForm() {
 	const [formData, setFormData ] = useState({
 		firstName: "",
 		lastName: "",
@@ -15,8 +15,10 @@ export default function RegisterPage() {
 	});
 	const [isLoading, setIsLoading] = useState(false);
 	const [error, setError] = useState("");
-	
+
 	const router = useRouter();
+	const searchParams = useSearchParams();
+	const callbackUrl = searchParams.get("callbackUrl");
 	
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		setFormData(prev => ({
@@ -68,7 +70,11 @@ export default function RegisterPage() {
 			
 			if (response.ok) {
 				console.log(response);
-				router.push("/login?message=Compte créé avec succès");
+				// Redirect to login page, passing the callback URL if it exists
+				const loginUrl = callbackUrl
+					? `/login?message=Compte créé avec succès&callbackUrl=${encodeURIComponent(callbackUrl)}`
+					: "/login?message=Compte créé avec succès";
+				router.push(loginUrl);
 			} else {
 				const data = await response.json();
 				setError(data.error || "Une erreur est survenue");
@@ -89,7 +95,10 @@ export default function RegisterPage() {
 					</h2>
 					<p className="mt-2 text-center text-sm text-gray-600">
 						Ou{" "}
-						<Link href="/login" className="font-medium text-patisserie-coral hover:text-patisserie-yellow">
+						<Link
+							href={callbackUrl ? `/login?callbackUrl=${encodeURIComponent(callbackUrl)}` : "/login"}
+							className="font-medium text-patisserie-coral hover:text-patisserie-yellow"
+						>
 							connectez-vous à votre compte existant
 						</Link>
 					</p>
@@ -214,6 +223,14 @@ export default function RegisterPage() {
 					</div>
 				</form>
 			</div>
-		</div>	
+		</div>
+	);
+}
+
+export default function RegisterPage() {
+	return (
+		<Suspense fallback={<div className="p-8 text-center">Chargement...</div>}>
+			<RegisterForm />
+		</Suspense>
 	);
 }

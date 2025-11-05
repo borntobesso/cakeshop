@@ -5,6 +5,7 @@ import { useCart } from '@/context/CartContext'
 import Image from 'next/image'
 import CheckoutForm from '@/components/CheckoutForm'
 import { useSession } from 'next-auth/react'
+import { useRouter } from 'next/navigation'
 import StepIndicator from '@/components/StepIndicator'
 import CartSuggestionsPopup from '@/components/CartSuggestionsPopup'
 
@@ -28,6 +29,7 @@ const steps = [
 export default function CartPage() {
   const { items, removeFromCart, updateQuantity, clearCart } = useCart()
   const { data: session } = useSession()
+  const router = useRouter()
   const [currentStep, setCurrentStep] = useState(1)
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false)
   const [isSuggestionsOpen, setIsSuggestionsOpen] = useState(false)
@@ -39,6 +41,13 @@ export default function CartPage() {
   const totalPrice = items.reduce((sum, item) => sum + (item.price * item.quantity), 0)
 
   const handleValidateCart = () => {
+    // Check if user is authenticated before allowing checkout
+    if (!session) {
+      // Redirect to login page with callback URL to return to cart
+      router.push('/login?callbackUrl=/panier&message=Veuillez vous connecter pour passer commande')
+      return
+    }
+
     setCurrentStep(1)
     setIsSuggestionsOpen(true)
   }
