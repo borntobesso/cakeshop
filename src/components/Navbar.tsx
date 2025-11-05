@@ -46,8 +46,8 @@ export default function Navbar() {
       <nav className="bg-white shadow-sm relative">
         <div className="container mx-auto px-4 py-4">
           <div className="flex justify-between items-center">
-            {/* Left side - Sidebar toggle + Mobile hamburger */}
-            <div className="flex items-center space-x-3">
+            {/* Left side - Sidebar toggle */}
+            <div className="flex items-center">
               {/* Sidebar Toggle Button (Always visible) */}
               <button
                 onClick={() => setIsSidebarOpen(!isSidebarOpen)}
@@ -56,21 +56,6 @@ export default function Navbar() {
               >
                 <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                </svg>
-              </button>
-
-              {/* Mobile Hamburger Menu Button (Mobile only - for user actions) */}
-              <button
-                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="md:hidden p-2 rounded-md text-gray-600 hover:text-patisserie-coral focus:outline-none transition-colors"
-                aria-label="Menu utilisateur"
-              >
-                <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  {isMobileMenuOpen ? (
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                  ) : (
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zM12 13a1 1 0 110-2 1 1 0 010 2zM12 20a1 1 0 110-2 1 1 0 010 2z" />
-                  )}
                 </svg>
               </button>
             </div>
@@ -138,13 +123,28 @@ export default function Navbar() {
               </div>
             </div>
 
-            {/* Mobile Cart & Auth */}
+            {/* Mobile Cart & User Menu */}
             <div className="md:hidden flex items-center space-x-2">
               <button
                 onClick={toggleCart}
                 className="bg-patisserie-mint hover:bg-patisserie-yellow text-gray-800 px-3 py-1 rounded-full text-sm transition-colors"
               >
                 Panier ({isHydrated ? totalItems : 0})
+              </button>
+
+              {/* Mobile User Menu Button (Three dots) */}
+              <button
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                className="p-2 rounded-md text-gray-600 hover:text-patisserie-coral focus:outline-none transition-colors"
+                aria-label="Menu utilisateur"
+              >
+                <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  {isMobileMenuOpen ? (
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  ) : (
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zM12 13a1 1 0 110-2 1 1 0 010 2zM12 20a1 1 0 110-2 1 1 0 010 2z" />
+                  )}
+                </svg>
               </button>
             </div>
           </div>
