@@ -92,7 +92,7 @@ export default function BrunchPage() {
                   </svg>
                   <div>
                     <p className="font-medium text-gray-900">Horaires Brunch</p>
-                    <p>Samedi & Dimanche: 9h30 - 15h00</p>
+                    <p>Tous les jours: 9h30 - 16h00</p>
                   </div>
                 </div>
                 <div className="flex items-start space-x-3">
@@ -111,7 +111,7 @@ export default function BrunchPage() {
                   </svg>
                   <div>
                     <p className="font-medium text-gray-900">Réservation</p>
-                    <p>Recommandée pour les groupes</p>
+                    <p>Possible en semaine uniquement</p>
                   </div>
                 </div>
               </div>
