@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useCart } from "@/context/CartContext";
 import { useSession, signOut } from "next-auth/react";
@@ -61,8 +62,15 @@ export default function Navbar() {
             </div>
 
             {/* Logo */}
-            <Link href="/" className="text-2xl font-serif">
-              Fu Pâtisserie
+            <Link href="/" className="flex items-center space-x-3">
+              <Image
+                src="/logo-JPG.webp"
+                alt="Fu Pâtisserie Logo"
+                width={48}
+                height={48}
+                className="object-contain"
+              />
+              <span className="text-2xl font-serif">Fu Pâtisserie</span>
             </Link>
 
             {/* Desktop Navigation */}

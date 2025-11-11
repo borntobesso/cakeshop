@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 
 export default function Footer() {
   return (
@@ -9,7 +10,14 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Logo and About */}
           <div className="space-y-4">
-            <Link href="/" className="inline-block">
+            <Link href="/" className="inline-flex items-center space-x-3">
+              <Image
+                src="/logo-JPG.webp"
+                alt="Fu Pâtisserie Logo"
+                width={48}
+                height={48}
+                className="object-contain"
+              />
               <h2 className="text-2xl font-serif text-gray-900">
                 Fu Pâtisserie
               </h2>
