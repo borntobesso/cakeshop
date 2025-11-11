@@ -380,7 +380,6 @@ export default function GateauxEvenementielsPage() {
               {imagePreviews.length > 0 && (
                 <div className="mt-4 grid grid-cols-2 md:grid-cols-5 gap-4">
                   {imagePreviews.map((preview, index) => (
-                    // Add `import Image from "next/image"` at the top of the file
                     <div key={index} className="relative group h-24 rounded-md overflow-hidden border border-gray-200">
                       <Image
                         src={preview}
@@ -497,15 +496,11 @@ export default function GateauxEvenementielsPage() {
             <div>
               <p className="font-medium text-gray-700 mb-2">Par Email</p>
               <a
-                // href="mailto:fupatisserie@gmail.com"
-                href="mailto:soyoung.jung13@gmail.com"
+                href="mailto:fupatisserie@gmail.com"
                 className="text-lg font-semibold text-gray-900 hover:text-patisserie-coral transition-colors"
               >
                 fupatisserie@gmail.com
               </a>
-              <p className="text-sm text-gray-600 mt-1">
-                Réponse sous 24h
-              </p>
             </div>
           </div>
         </div>

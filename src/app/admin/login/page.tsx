@@ -75,7 +75,7 @@ export default function AdminLoginPage() {
 					<div className="space-y-4">
 						<div>
 							<label htmlFor="identifier" className="block text-sm font-medium text-white">
-								Email ou téléphone administrateur
+								Email
 							</label>
 							<input
 								id="identifier"
@@ -83,7 +83,7 @@ export default function AdminLoginPage() {
 								type="text"
 								required
 								className="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-600 bg-gray-800 placeholder-gray-400 text-white rounded-md focus:outline-none focus:ring-red-500 focus:border-red-500 focus:z-10 sm:text-sm"
-								placeholder="admin@fupatisserie.com ou 06 12 34 56 78"
+								placeholder="Email administrateur"
 								value={formData.identifier}
 								onChange={handleChange}
 							/>
