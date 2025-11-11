@@ -37,13 +37,26 @@ export default function AdminDashboard() {
 					</h2>
 					<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 						<div className="bg-white rounded-lg shadow p-6">
+							<h3 className="text-lg font-semibold mb-4">📅 Calendrier</h3>
+							<p className="text-gray-600 mb-4">
+								Vue calendrier des commandes et préparations quotidiennes
+							</p>
+							<a
+								href="/admin/dashboard/calendar"
+								className="inline-block bg-patisserie-mint hover:bg-patisserie-yellow text-gray-900 px-4 py-2 rounded-lg transition-colors font-medium"
+							>
+								Voir le calendrier
+							</a>
+						</div>
+
+						<div className="bg-white rounded-lg shadow p-6">
 							<h3 className="text-lg font-semibold mb-4">Pré-Autorisations</h3>
 							<p className="text-gray-600 mb-4">
 								Gérer les pré-autorisations bancaires des nouveaux clients
 							</p>
 							<a
 								href="/admin/preauth"
-								className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors"
+								className="inline-block bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors"
 							>
 								Gérer les pré-autorisations
 							</a>
@@ -56,7 +69,7 @@ export default function AdminDashboard() {
 							</p>
 							<a
 								href="/admin/special-codes"
-								className="bg-patisserie-coral hover:bg-patisserie-yellow text-white px-4 py-2 rounded-lg transition-colors"
+								className="inline-block bg-patisserie-coral hover:bg-patisserie-yellow text-gray-900 px-4 py-2 rounded-lg transition-colors"
 							>
 								Gérer les codes
 							</a>
