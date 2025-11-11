@@ -1,6 +1,7 @@
 import "./globals.css";
 import type { Metadata } from "next";
 import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 import Providers from "@/components/Providers";
 import { Inter } from "next/font/google";
 
@@ -21,14 +22,10 @@ export default function RootLayout({
       <body className={inter.className}>
         <Providers>
           <Navbar />
-          <main className="flex-grow">
+          <main className="min-h-screen">
             {children}
           </main>
-          <footer className="bg-patisserie-mint py-8 mt-16">
-            <div className="container mx-auto px-4 text-center">
-              <p className="text-gray-700">© 2025 Fu Pâtisserie - Tous droits réservés</p>
-            </div>
-          </footer>
+          <Footer />
         </Providers>
       </body>
     </html>

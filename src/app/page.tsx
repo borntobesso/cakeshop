@@ -62,22 +62,6 @@ export default function Home() {
           ))}
         </div>
       </section>
-
-      {/* Contact Section */}
-      <section className="bg-patisserie-coral py-16">
-        <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl font-serif mb-6">Nous Trouver</h2>
-          <p className="mb-4">101 Avenue de Choisy</p>
-          <p className="mb-4">75013 Paris, France</p>
-          <p className="mb-4">Tél: 01 40 21 04 55</p>
-          <div className="mt-8">
-            <h3 className="text-2xl font-serif mb-4">Horaires d&apos;Ouverture</h3>
-            <p>Mardi - Vendredi: 8h30 - 19h00</p>
-            <p>Samedi - Dimanche: 9h30 - 19h00</p>
-            <p>Fermé le Lundi</p>
-          </div>
-        </div>
-      </section>
     </main>
   )
 }
