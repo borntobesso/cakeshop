@@ -97,7 +97,7 @@ function SuccessContent() {
 						Votre commande a été confirmée et sera prête pour le retrait.
 					</p>
 					<p className="text-sm text-gray-500 mb-8">
-						Retour à l'accueil dans {countdown} secondes...
+						Retour à l&apos;accueil dans {countdown} secondes...
 					</p>
 				</div>
 				
@@ -136,7 +136,7 @@ function SuccessContent() {
 						href="/"
 						className="bg-blue-700 text-white px-6 py-3 rounded-lg hover:bg-blue-800 transition-colors"
 					>
-						Retour à l'accueil
+						Retour à l&apos;accueil
 					</Link>
 					<Link
 						href="/patisseries"
