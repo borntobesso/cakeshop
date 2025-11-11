@@ -1,10 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 export default function GateauxEvenementielsPage() {
-  const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<{
     type: "success" | "error" | null;
@@ -256,7 +255,7 @@ export default function GateauxEvenementielsPage() {
                   htmlFor="phone"
                   className="block text-sm font-medium text-gray-700 mb-2"
                 >
-                  Téléphone <span className="text-red-500">*</span>
+                  Téléphone
                 </label>
                 <input
                   type="tel"
@@ -264,7 +263,6 @@ export default function GateauxEvenementielsPage() {
                   name="phone"
                   value={formData.phone}
                   onChange={handleInputChange}
-                  required
                   className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-patisserie-coral focus:border-transparent"
                 />
               </div>
@@ -282,7 +280,7 @@ export default function GateauxEvenementielsPage() {
                     htmlFor="eventDate"
                     className="block text-sm font-medium text-gray-700 mb-2"
                   >
-                    Date de l&apos;événement <span className="text-red-500">*</span>
+                    Date de l&apos;événement
                   </label>
                   <input
                     type="date"
@@ -291,7 +289,6 @@ export default function GateauxEvenementielsPage() {
                     value={formData.eventDate}
                     onChange={handleInputChange}
                     min={minDate}
-                    required
                     className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-patisserie-coral focus:border-transparent"
                   />
                 </div>
@@ -301,14 +298,13 @@ export default function GateauxEvenementielsPage() {
                     htmlFor="eventType"
                     className="block text-sm font-medium text-gray-700 mb-2"
                   >
-                    Type d&apos;événement <span className="text-red-500">*</span>
+                    Type d&apos;événement
                   </label>
                   <select
                     id="eventType"
                     name="eventType"
                     value={formData.eventType}
                     onChange={handleInputChange}
-                    required
                     className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-patisserie-coral focus:border-transparent"
                   >
                     <option value="">Sélectionner...</option>
@@ -327,7 +323,7 @@ export default function GateauxEvenementielsPage() {
                     htmlFor="guestCount"
                     className="block text-sm font-medium text-gray-700 mb-2"
                   >
-                    Nombre d&apos;invités <span className="text-red-500">*</span>
+                    Nombre d&apos;invités
                   </label>
                   <input
                     type="text"
@@ -336,7 +332,6 @@ export default function GateauxEvenementielsPage() {
                     value={formData.guestCount}
                     onChange={handleInputChange}
                     placeholder="Ex: 50"
-                    required
                     className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-patisserie-coral focus:border-transparent"
                   />
                 </div>
@@ -385,11 +380,14 @@ export default function GateauxEvenementielsPage() {
               {imagePreviews.length > 0 && (
                 <div className="mt-4 grid grid-cols-2 md:grid-cols-5 gap-4">
                   {imagePreviews.map((preview, index) => (
-                    <div key={index} className="relative group">
-                      <img
+                    // Add `import Image from "next/image"` at the top of the file
+                    <div key={index} className="relative group h-24 rounded-md overflow-hidden border border-gray-200">
+                      <Image
                         src={preview}
                         alt={`Preview ${index + 1}`}
-                        className="w-full h-24 object-cover rounded-md border border-gray-200"
+                        fill
+                        className="object-cover"
+                        unoptimized
                       />
                       <button
                         type="button"
@@ -499,7 +497,8 @@ export default function GateauxEvenementielsPage() {
             <div>
               <p className="font-medium text-gray-700 mb-2">Par Email</p>
               <a
-                href="mailto:fupatisserie@gmail.com"
+                // href="mailto:fupatisserie@gmail.com"
+                href="mailto:soyoung.jung13@gmail.com"
                 className="text-lg font-semibold text-gray-900 hover:text-patisserie-coral transition-colors"
               >
                 fupatisserie@gmail.com
