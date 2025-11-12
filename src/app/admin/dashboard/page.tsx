@@ -50,6 +50,19 @@ export default function AdminDashboard() {
 						</div>
 
 						<div className="bg-white rounded-lg shadow p-6">
+							<h3 className="text-lg font-semibold mb-4">📊 Tableau des Commandes</h3>
+							<p className="text-gray-600 mb-4">
+								Filtrez, triez et exportez toutes les commandes en Excel
+							</p>
+							<a
+								href="/admin/dashboard/orders"
+								className="inline-block bg-patisserie-coral hover:bg-patisserie-yellow text-gray-900 px-4 py-2 rounded-lg transition-colors font-medium"
+							>
+								Voir le tableau
+							</a>
+						</div>
+
+						<div className="bg-white rounded-lg shadow p-6">
 							<h3 className="text-lg font-semibold mb-4">Pré-Autorisations</h3>
 							<p className="text-gray-600 mb-4">
 								Gérer les pré-autorisations bancaires des nouveaux clients
