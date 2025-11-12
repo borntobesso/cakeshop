@@ -63,6 +63,19 @@ export default function AdminDashboard() {
 						</div>
 
 						<div className="bg-white rounded-lg shadow p-6">
+							<h3 className="text-lg font-semibold mb-4">📈 Analytiques</h3>
+							<p className="text-gray-600 mb-4">
+								Statistiques détaillées et tendances des commandes
+							</p>
+							<a
+								href="/admin/dashboard/analytics"
+								className="inline-block bg-patisserie-yellow hover:bg-patisserie-mint text-gray-900 px-4 py-2 rounded-lg transition-colors font-medium"
+							>
+								Voir les analytiques
+							</a>
+						</div>
+
+						<div className="bg-white rounded-lg shadow p-6">
 							<h3 className="text-lg font-semibold mb-4">Pré-Autorisations</h3>
 							<p className="text-gray-600 mb-4">
 								Gérer les pré-autorisations bancaires des nouveaux clients
