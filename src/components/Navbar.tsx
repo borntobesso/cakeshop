@@ -105,6 +105,14 @@ export default function Navbar() {
                     <span className="text-sm text-gray-700">
                       Bonjour, <span className="font-medium">{session.user?.name}</span>
                     </span>
+                    {session.user?.role === "admin" && (
+                      <Link
+                        href="/admin/dashboard"
+                        className="text-sm bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-full transition-colors"
+                      >
+                        Admin
+                      </Link>
+                    )}
                     <button
                       onClick={() => signOut()}
                       className="text-sm text-patisserie-coral hover:text-patisserie-yellow transition-colors"
@@ -170,6 +178,15 @@ export default function Navbar() {
                       <div className="text-sm text-gray-700">
                         Bonjour, <span className="font-medium">{session.user?.name}</span>
                       </div>
+                      {session.user?.role === "admin" && (
+                        <Link
+                          href="/admin/dashboard"
+                          className="block text-sm bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-full transition-colors text-center"
+                          onClick={() => setIsMobileMenuOpen(false)}
+                        >
+                          Admin
+                        </Link>
+                      )}
                       <button
                         onClick={() => {
                           signOut();

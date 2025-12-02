@@ -59,11 +59,11 @@ export default function ProductCard({
     : `${product.price}€`
 
   return (
-    <div className={`group relative ${compact ? 'h-64' : 'h-80'}`}>
-      <Link href={`/product/${product.id}`} className="block h-full">
-        <div className="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200 h-full flex flex-col overflow-hidden">
-          {/* Product Image */}
-          <div className={`relative bg-gray-100 ${compact ? 'h-40' : 'h-48'} overflow-hidden`}>
+    <div className="group relative">
+      <Link href={`/product/${product.id}`} className="block">
+        <div className="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200 flex flex-col overflow-hidden">
+          {/* Product Image - Square aspect ratio */}
+          <div className="relative bg-gray-100 w-full aspect-square overflow-hidden">
             <Image
               src={product.image}
               alt={product.name}

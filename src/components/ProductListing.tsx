@@ -204,7 +204,7 @@ export default function ProductListing({
                   className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300"
                 >
                   <Link href={`/product/${product.id}`}>
-                    <div className="relative h-64 cursor-pointer">
+                    <div className="relative w-full aspect-square cursor-pointer">
                       <Image
                         src={product.image}
                         alt={product.name}

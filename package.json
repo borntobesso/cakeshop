@@ -13,7 +13,8 @@
     "db:migrate": "dotenv -e .env.local -- npx prisma migrate dev",
     "db:studio": "dotenv -e .env.local -- npx prisma studio",
     "db:generate": "dotenv -e .env.local -- npx prisma generate",
-    "db:reset": "dotenv -e .env.local -- npx prisma migrate reset"
+    "db:reset": "dotenv -e .env.local -- npx prisma migrate reset",
+    "seed:mock": "dotenv -e .env.local -- npx tsx scripts/seed-mock-orders.ts"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.10.0",
@@ -53,6 +54,7 @@
     "eslint-config-next": "15.3.1",
     "postcss": "^8.4.31",
     "tailwindcss": "^3.3.0",
+    "tsx": "^4.20.6",
     "typescript": "^5"
   }
 }

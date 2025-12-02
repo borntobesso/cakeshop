@@ -56,7 +56,7 @@ export default function AdminDashboard() {
 							</p>
 							<a
 								href="/admin/dashboard/orders"
-								className="inline-block bg-patisserie-coral hover:bg-patisserie-yellow text-gray-900 px-4 py-2 rounded-lg transition-colors font-medium"
+								className="inline-block bg-patisserie-mint hover:bg-patisserie-yellow text-gray-900 px-4 py-2 rounded-lg transition-colors font-medium"
 							>
 								Voir le tableau
 							</a>
@@ -69,7 +69,7 @@ export default function AdminDashboard() {
 							</p>
 							<a
 								href="/admin/dashboard/analytics"
-								className="inline-block bg-patisserie-yellow hover:bg-patisserie-mint text-gray-900 px-4 py-2 rounded-lg transition-colors font-medium"
+								className="inline-block bg-patisserie-mint hover:bg-patisserie-yellow text-gray-900 px-4 py-2 rounded-lg transition-colors font-medium"
 							>
 								Voir les analytiques
 							</a>
@@ -81,8 +81,8 @@ export default function AdminDashboard() {
 								Gérer les pré-autorisations bancaires des nouveaux clients
 							</p>
 							<a
-								href="/admin/preauth"
-								className="inline-block bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors"
+								href="/admin/dashboard/preauth"
+								className="inline-block bg-patisserie-mint hover:bg-patisserie-yellow text-gray-900 px-4 py-2 rounded-lg transition-colors font-medium"
 							>
 								Gérer les pré-autorisations
 							</a>
@@ -94,10 +94,23 @@ export default function AdminDashboard() {
 								Générer et gérer les codes pour les cartes cadeaux
 							</p>
 							<a
-								href="/admin/special-codes"
-								className="inline-block bg-patisserie-coral hover:bg-patisserie-yellow text-gray-900 px-4 py-2 rounded-lg transition-colors"
+								href="/admin/dashboard/special-codes"
+								className="inline-block bg-patisserie-mint hover:bg-patisserie-yellow text-gray-900 px-4 py-2 rounded-lg transition-colors font-medium"
 							>
 								Gérer les codes
+							</a>
+						</div>
+
+						<div className="bg-white rounded-lg shadow p-6">
+							<h3 className="text-lg font-semibold mb-4">🍰 Produits</h3>
+							<p className="text-gray-600 mb-4">
+								Ajouter, modifier ou supprimer des produits
+							</p>
+							<a
+								href="/admin/dashboard/products"
+								className="inline-block bg-patisserie-mint hover:bg-patisserie-yellow text-gray-900 px-4 py-2 rounded-lg transition-colors font-medium"
+							>
+								Gérer les produits
 							</a>
 						</div>
 						{/* Other features.. */}
