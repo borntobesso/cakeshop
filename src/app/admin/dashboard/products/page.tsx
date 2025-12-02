@@ -23,6 +23,7 @@ interface Product {
 	preparationTime?: number;
 	storage?: string;
 	sizeOptions?: any;
+	relatedProductIds?: any;
 	category?: {
 		id: string;
 		name: string;

@@ -1,10 +1,9 @@
 import Image from "next/image";
 import Link from "next/link";
 import productsData from '@/data/products.json'
-import { Product } from '@/types/product'
 
 export default function Home() {
-  const products = productsData.products as Product[]
+  const products = productsData.products
   
   return (
     <main className="min-h-screen bg-patisserie-cream">
