@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { stripe } from "@/lib/stripe";
 import { prisma } from "@/lib/prisma";
 import { useSpecialCode } from "@/lib/payment-utils";
-import { sendAllOrderNotifications, sendCustomerNotificationsOnly, sendMailNotificationsOnly } from "@/lib/order-notifications";
+import { sendAllOrderNotifications } from "@/lib/order-notifications";
 import { generateOrderNumber } from "@/lib/order-utils";
 
 export async function POST(request: Request) {
@@ -130,11 +130,8 @@ export async function POST(request: Request) {
     }
     
     try {
-      // await sendAllOrderNotifications(order);
-      // await sendMailNotificationsOnly(order);
-      console.log("Supposing sending emails after process payment...");
-      console.log("Order details:", order);
-      
+      await sendAllOrderNotifications(order);
+      console.log("Notifications sent successfully for online payment order");
     } catch (notificationError) {
       console.error("Notification error:", notificationError);
     }

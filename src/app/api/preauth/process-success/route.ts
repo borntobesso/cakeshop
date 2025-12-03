@@ -164,9 +164,8 @@ export async function POST(request: NextRequest) {
 
     // Send notifications now that order is created
     try {
-      // await sendMailNotificationsOnly(order);
-      console.log("Supposing sending emails after process pre-auth...");
-      console.log("Order details:", order);
+      await sendMailNotificationsOnly(order);
+      console.log("Email notifications sent successfully for pre-auth order");
     } catch (notificationError) {
       console.error("Notification error:", notificationError);
     }

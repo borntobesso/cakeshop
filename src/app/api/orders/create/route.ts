@@ -3,7 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth-config";
 import { prisma } from "@/lib/prisma";
 import { useSpecialCode, isFirstTimeCustomer } from "@/lib/payment-utils";
-import { sendAllOrderNotifications, sendCustomerNotificationsOnly, sendMailNotificationsOnly } from "@/lib/order-notifications";
+import { sendAllOrderNotifications } from "@/lib/order-notifications";
 import { generateOrderNumber } from "@/lib/order-utils";
 
 interface CreateOrderRequest {
@@ -107,10 +107,8 @@ export async function POST(request: Request) {
     });
 
     try {
-      // await sendAllOrderNotifications(order);
-      // await sendMailNotificationsOnly(order);
-      console.log("Supposing sending emails after process on-site...");
-      console.log("Order details:", order);
+      await sendAllOrderNotifications(order);
+      console.log("Notifications sent successfully for on-site order");
     } catch (notificationError) {
       console.error("Notification error:", notificationError);
     }
