@@ -1,8 +1,12 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
+  // Next.js 16: eslint config moved to package.json or eslint.config.js
+  // Use --lint flag with next build if needed
+
+  // Enable turbopack explicitly to silence the warning
+  turbopack: {},
+
+  // Webpack config for fallback (still needed for some libraries)
   webpack: (config, { isServer }) => {
     if (!isServer) {
       config.resolve.fallback = {
