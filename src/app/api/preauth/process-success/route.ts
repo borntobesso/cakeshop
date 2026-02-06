@@ -3,7 +3,7 @@ import { stripe } from "@/lib/stripe";
 import { prisma } from "@/lib/prisma";
 import { generateOrderNumber } from "@/lib/order-utils";
 import { useSpecialCode } from "@/lib/payment-utils";
-import { sendMailNotificationsOnly } from "@/lib/order-notifications";
+import { sendAllOrderNotifications, sendMailNotificationsOnly } from "@/lib/order-notifications";
 
 export async function POST(request: NextRequest) {
   try {
@@ -164,8 +164,8 @@ export async function POST(request: NextRequest) {
 
     // Send notifications now that order is created
     try {
-      await sendMailNotificationsOnly(order);
-      console.log("Email notifications sent successfully for pre-auth order");
+      await sendAllOrderNotifications(order);
+      console.log("All notifications sent successfully for pre-auth order");
     } catch (notificationError) {
       console.error("Notification error:", notificationError);
     }

@@ -16,8 +16,8 @@ interface OrderNotificationOptions {
 const DEFAULT_OPTIONS: OrderNotificationOptions = {
   sendCustomerEmail: true,
   sendShopEmail: true,
-  sendShopSMS: process.env.NODE_ENV === 'production', // 개발 시 SMS 비활성화
-  printReceipts: false, // 개발 시 프린트 비활성화
+  sendShopSMS: false,
+  printReceipts: true,
   scheduleReminder: process.env.NODE_ENV === 'production',
 };
 

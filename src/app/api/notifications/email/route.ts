@@ -22,7 +22,7 @@ const transporter = nodemailer.createTransport({
 });
 
 interface EmailRequest {
-  type: "order_confirmation" | "new_order_shop" | "print_failure";
+  type: "order_confirmation" | "new_order_shop" | "print_failure" | "pickup_reminder";
   order: any;
   to: string;
   error?: string;
@@ -520,6 +520,166 @@ function createPrintFailureEmailHTML(order: any, error: string, severity: 'warni
   `;
 }
 
+function createPickupReminderEmailHTML(order: any) {
+  const pickupDate = new Date(order.pickupDate).toLocaleDateString('fr-FR', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  });
+
+  return `
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <meta charset="utf-8">
+        <title>Rappel de retrait - ${SHOP_NAME}</title>
+        <style>
+          body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+          }
+          .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+            border-radius: 8px;
+            margin-bottom: 30px;
+          }
+          .reminder-icon {
+            font-size: 3em;
+            margin-bottom: 10px;
+          }
+          .reminder-box {
+            background-color: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 20px;
+            border-radius: 5px;
+            margin: 20px 0;
+          }
+          .pickup-info {
+            background-color: #e3f2fd;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid #2196f3;
+          }
+          .order-details {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 5px;
+            margin: 20px 0;
+          }
+          .item {
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+          }
+          .total {
+            font-weight: bold;
+            font-size: 1.2em;
+            margin-top: 20px;
+          }
+          .payment-info {
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid #9c27b0;
+          }
+          .payment-online {
+            background-color: #e8f5e8;
+            border-left-color: #4caf50;
+          }
+          .payment-onsite {
+            background-color: #fff3e0;
+            border-left-color: #ff9800;
+          }
+          .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #dee2e6;
+            font-size: 0.9em;
+            color: #666;
+          }
+          .important {
+            background-color: #ffebee;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+            border-left: 4px solid #f44336;
+          }
+        </style>
+      </head>
+      <body>
+        <div class="header">
+          <div class="reminder-icon">🔔</div>
+          <h1>Rappel de retrait</h1>
+          <p style="margin: 0; font-size: 1.1em;">Votre commande vous attend demain !</p>
+        </div>
+
+        <p>Bonjour ${order.customerName},</p>
+
+        <div class="reminder-box">
+          <h2>⏰ N'oubliez pas !</h2>
+          <p style="font-size: 1.1em; margin: 0;">
+            Votre commande est prête à être récupérée <strong>demain</strong>.
+          </p>
+        </div>
+
+        <div class="pickup-info">
+          <h2>📍 Détails du retrait</h2>
+          <p><strong>📅 Date :</strong> ${pickupDate}</p>
+          <p><strong>🕐 Heure :</strong> ${order.pickupTime}</p>
+          <p><strong>📍 Adresse :</strong> 101 Avenue de Choisy, 75013 Paris</p>
+        </div>
+
+        <div class="payment-info ${order.paymentMethod === 'online' ? 'payment-online' : 'payment-onsite'}">
+          <h2>💳 Paiement</h2>
+          ${order.paymentMethod === 'online'
+            ? `<p><strong>✅ Déjà payé en ligne</strong></p>
+               <p>Vous n'avez rien à payer lors du retrait.</p>`
+            : `<p><strong>💰 À payer sur place</strong></p>
+               <p>Montant à régler : <strong>${order.totalAmount.toFixed(2)}€</strong></p>
+               <p>Moyens de paiement : Espèces, Carte bancaire</p>`}
+        </div>
+
+        <div class="order-details">
+          <h2>📋 Récapitulatif de votre commande</h2>
+          <p><strong>Numéro de commande :</strong> ${order.orderNumber || order.id.slice(-8)}</p>
+
+          ${order.items
+            .map((item: any) => `
+            <div class="item">
+              <strong>${item.name}${item.size ? ` (${item.size})` : ""}</strong><br>
+              Quantité: ${item.quantity}<br>
+              Prix: ${(item.price * item.quantity).toFixed(2)}€
+            </div>
+          `)
+            .join("")}
+
+          <div class="total">
+            Total : ${order.totalAmount.toFixed(2)}€
+          </div>
+        </div>
+
+        <p>À demain chez ${SHOP_NAME} !</p>
+
+        <div class="footer">
+          <p><strong>${SHOP_NAME}</strong></p>
+          <p>101 Avenue de Choisy, 75013 Paris</p>
+          <p>Tél: 01 40 21 04 55</p>
+        </div>
+      </body>
+    </html>
+  `;
+}
+
 export async function POST(request: Request) {
   try {
     if (!EMAIL_HOST || !EMAIL_USER || !EMAIL_PASS) {
@@ -553,7 +713,12 @@ export async function POST(request: Request) {
         subject = `${urgencyPrefix} - Erreur impression - Commande ${order.orderNumber || order.id.slice(-8)}`;
         html = createPrintFailureEmailHTML(order, error || 'Erreur inconnue', printSeverity);
         break;
-        
+
+      case "pickup_reminder":
+        subject = `🔔 Rappel - Retrait demain chez ${SHOP_NAME}`;
+        html = createPickupReminderEmailHTML(order);
+        break;
+
       default:
         return NextResponse.json(
           { success: false, error: "Invalid email type" },

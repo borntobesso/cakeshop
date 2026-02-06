@@ -2,8 +2,9 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
 /**
- * Cron job endpoint to send pickup reminders
- * Should be called every few minutes by external cron service
+ * Cron job endpoint to send pickup reminder emails
+ * Should be called every few minutes by external cron service (e.g., via Vercel Cron)
+ * Sends email reminders 24 hours before pickup time
  * URL: /api/cron/send-reminders
  */
 
@@ -55,28 +56,40 @@ export async function POST(request: Request) {
     const results = await Promise.allSettled(
       pendingReminders.map(async (reminder) => {
         try {
-          // Send SMS reminder
-          const smsResponse = await fetch(
-            `${process.env.NEXTAUTH_URL}/api/notifications/sms`,
+          // Get full order data to include items in email
+          const fullOrder = await prisma.order.findUnique({
+            where: { id: reminder.orderId }
+          });
+
+          if (!fullOrder) {
+            throw new Error(`Order ${reminder.orderId} not found`);
+          }
+
+          // Send email reminder
+          const emailResponse = await fetch(
+            `${process.env.NEXTAUTH_URL}/api/notifications/email`,
             {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({
                 type: "pickup_reminder",
                 order: {
-                  id: reminder.orderId,
-                  orderNumber: reminder.orderNumber,
-                  customerName: reminder.customerName,
-                  pickupDate: reminder.pickupDate,
-                  pickupTime: reminder.pickupTime,
-                  totalAmount: 0 // Not needed for reminder
+                  id: fullOrder.id,
+                  orderNumber: fullOrder.orderNumber,
+                  customerName: fullOrder.customerName,
+                  customerEmail: fullOrder.customerEmail,
+                  pickupDate: fullOrder.pickupDate,
+                  pickupTime: fullOrder.pickupTime,
+                  totalAmount: fullOrder.totalAmount,
+                  paymentMethod: fullOrder.paymentMethod,
+                  items: fullOrder.items
                 },
-                to: reminder.customerPhone,
+                to: fullOrder.customerEmail,
               }),
             }
           );
 
-          if (smsResponse.ok) {
+          if (emailResponse.ok) {
             // Mark reminder as sent
             await prisma.scheduledReminder.update({
               where: { id: reminder.id },
@@ -86,14 +99,14 @@ export async function POST(request: Request) {
               }
             });
 
-            console.log(`✅ Reminder sent successfully for order ${reminder.orderNumber}`);
-            return { 
-              success: true, 
-              reminderId: reminder.id, 
-              orderNumber: reminder.orderNumber 
+            console.log(`✅ Reminder email sent successfully for order ${reminder.orderNumber}`);
+            return {
+              success: true,
+              reminderId: reminder.id,
+              orderNumber: reminder.orderNumber
             };
           } else {
-            throw new Error(`SMS API returned ${smsResponse.status}`);
+            throw new Error(`Email API returned ${emailResponse.status}`);
           }
 
         } catch (error) {
