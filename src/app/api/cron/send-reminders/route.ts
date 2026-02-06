@@ -3,8 +3,8 @@ import { prisma } from "@/lib/prisma";
 
 /**
  * Cron job endpoint to send pickup reminder emails
- * Should be called every few minutes by external cron service (e.g., via Vercel Cron)
- * Sends email reminders 24 hours before pickup time
+ * Runs once daily at 10 AM (configured in vercel.json)
+ * Sends email reminders to all customers with pickup date = tomorrow
  * URL: /api/cron/send-reminders
  */
 
@@ -27,19 +27,25 @@ export async function POST(request: Request) {
 
     console.log("🕐 Starting reminder cron job...");
 
-    // Find reminders that should be sent now
+    // Calculate tomorrow's date range (for pickups happening tomorrow)
     const now = new Date();
-    const reminderBuffer = new Date(now.getTime() + 5 * 60 * 1000); // 5 minutes buffer
+    const tomorrow = new Date(now);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    tomorrow.setHours(0, 0, 0, 0); // Start of tomorrow
 
+    const dayAfterTomorrow = new Date(tomorrow);
+    dayAfterTomorrow.setDate(dayAfterTomorrow.getDate() + 1); // End of tomorrow
+
+    // Find all pending reminders for orders with pickup date = tomorrow
     const pendingReminders = await prisma.scheduledReminder.findMany({
       where: {
         status: "pending",
-        reminderTime: {
-          lte: reminderBuffer // Send reminders that are due now (with 5min buffer)
+        pickupDate: {
+          gte: tomorrow,
+          lt: dayAfterTomorrow
         }
       },
-      orderBy: { reminderTime: 'asc' },
-      take: 10 // Process max 10 at a time to avoid timeouts
+      orderBy: { pickupTime: 'asc' }
     });
 
     if (pendingReminders.length === 0) {
