@@ -21,7 +21,6 @@ function createPrintContent(order: any): string {
 N° de commande - ${orderNumber}
 =============================
 
-<hibou_align_left>
 DATE DE RETRAIT:
 
 ${pickupDate}
@@ -37,6 +36,7 @@ Email: ${order.customerEmail}
 
 
 PRODUITS:
+
 ${order.items
   .map((item: any) => 
     `${item.name}${item.size ? ` (${item.size})` : ""}
@@ -49,9 +49,7 @@ ${order.items
 
 <hibou_font_size>2|1
 =========================
-<hibou_align_right>
 TOTAL: ${order.totalAmount.toFixed(2)} euros
-<hibou_align_left>
 =========================
 
 Méthode: ${order.paymentMethod === 'online' ? 'PAYÉ EN LIGNE' : 'PAIEMENT SUR PLACE'}
